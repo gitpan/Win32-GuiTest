@@ -1,5 +1,5 @@
 /* 
- *  $Id: GuiTest.xs,v 1.5 2001/06/02 11:10:38 erngui Exp $
+ *  $Id: GuiTest.xs,v 1.8 2001/06/17 19:24:42 erngui Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -113,6 +113,9 @@ int findvkey(const char* name, int* key)
         "F24",  VK_F24,
 	"SPC",  VK_SPACE,
 	"SPA",  VK_SPACE,
+        "LWI",  VK_LWIN,
+        "RWI",  VK_RWIN,
+        "APP",  VK_APPS,
     };
     int i;
     for (i=0;i<sizeof(tbl)/sizeof(tokentable);i++) {
@@ -126,27 +129,22 @@ int findvkey(const char* name, int* key)
 
 /* Get a number from the input string */
 int GetNum(
-	const char*s ,
-	int i,
-	int* len
-	)
+    const char*s ,
+    int i,
+    int* len
+    )
 {
     int res;
     int pos = 0;  
     char* tmp = (char*)safemalloc(strlen(s)+1);
     strcpy(tmp, s);
-    OutputDebugString(tmp);
-    OutputDebugString("GetNum2\n");
     while (s[i]>='0' && s[i]<='9') {
 	tmp[pos++] = s[i++];
 	(*len)++;
     }
-    OutputDebugString("GetNum3\n");
     tmp[pos] = '\0';
     res = atoi(tmp);
-    OutputDebugString("GetNum4\n");
     free(tmp);
-    OutputDebugString("GetNum5\n");
     return res;
 }
 
@@ -366,9 +364,30 @@ VOID simple_mouse(
     Sleep (10);
 }
 
+/* JJ Utilities for thread-specific window functions */
+
+BOOL AttachWin(HWND hwnd, BOOL fAttach)
+{
+  DWORD dwThreadId = GetWindowThreadProcessId(hwnd, NULL);
+  DWORD dwMyThread = GetCurrentThreadId();
+  return AttachThreadInput(dwMyThread, dwThreadId, fAttach);
+}
+
+
 MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest		
 
 PROTOTYPES: DISABLE
+
+void
+GetCursorPos()
+INIT:
+  POINT pt;
+PPCODE:
+  pt.x = pt.y = -1;
+  GetCursorPos(&pt);
+  XPUSHs(sv_2mortal(newSVnv(pt.x)));
+  XPUSHs(sv_2mortal(newSVnv(pt.y)));
+
 
 void
 SendLButtonUp()
@@ -426,8 +445,9 @@ MouseMoveAbsPix(x,y)
 
 
 void
-SendKeys(s)
+SendKeysImp(s, wait)
      char* s
+     DWORD wait
      PREINIT:
 	int i,j;
 	char c;
@@ -471,7 +491,7 @@ SendKeys(s)
 	    for (j=0; j<count; j++) {
                 keybd(key,TRUE);
 		keybd(key,FALSE);
-		Sleep(50); /* wait 50ms*/
+		Sleep(wait);
             }
 
             /* clear modifiers unless locked */
@@ -600,6 +620,14 @@ WMGetText(hwnd)
     OUTPUT:
         RETVAL
 
+int
+WMSetText(hwnd, text)
+  HWND hwnd
+  char * text
+CODE:
+  RETVAL = SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM) text);
+
+
 BOOL
 IsChild(hWndParent, hWnd)
     HWND hWndParent
@@ -625,3 +653,231 @@ GetChildDepth(hAncestor, hChild)
         RETVAL = depth;
     OUTPUT:
         RETVAL
+
+int
+SendMessage(hwnd, msg, wParam, lParam)
+  HWND hwnd
+  UINT msg
+  WPARAM wParam
+  LPARAM lParam
+CODE:
+  RETVAL = SendMessage(hwnd, msg, wParam, lParam);
+
+int
+PostMessage(hwnd, msg, wParam, lParam)
+  HWND hwnd
+  UINT msg
+  WPARAM wParam
+  LPARAM lParam
+CODE:
+  RETVAL = PostMessage(hwnd, msg, wParam, lParam);
+
+void
+CheckButton(hwnd)
+    HWND hwnd
+CODE:
+    SendMessage(hwnd, BM_SETCHECK, BST_CHECKED, 0);
+
+void
+UnCheckButton(hwnd)
+    HWND hwnd
+CODE:
+    SendMessage(hwnd, BM_SETCHECK, BST_UNCHECKED, 0);
+
+void
+GrayOutButton(hwnd)
+    HWND hwnd
+CODE:
+    SendMessage(hwnd, BM_SETCHECK, BST_INDETERMINATE, 0);
+
+BOOL
+IsCheckedButton(hwnd)
+    HWND hwnd
+CODE:
+    RETVAL = SendMessage(hwnd, BM_GETCHECK, 0, 0) == BST_CHECKED;
+OUTPUT:
+    RETVAL
+
+BOOL
+IsGrayedButton(hwnd)
+    HWND hwnd
+CODE:
+    RETVAL = SendMessage(hwnd, BM_GETCHECK, 0, 0) == BST_INDETERMINATE;
+OUTPUT:
+    RETVAL
+    
+BOOL
+IsWindow(hwnd)
+    HWND hwnd
+CODE:
+    RETVAL = IsWindow(hwnd);
+OUTPUT:
+    RETVAL
+
+void
+ScreenToClient(hwnd, x, y)
+    HWND hwnd
+    int x
+    int y
+INIT:
+    POINT pt;
+CODE:
+    pt.x = x;
+    pt.y = y;
+    if (ScreenToClient(hwnd, &pt)) {
+        XPUSHs(sv_2mortal(newSViv((IV)pt.x)));
+        XPUSHs(sv_2mortal(newSViv((IV)pt.y)));
+    }
+
+void
+ClientToScreen(hwnd, x, y)
+    HWND hwnd
+    int x
+    int y
+INIT:
+    POINT pt;
+CODE:
+    pt.x = x;
+    pt.y = y;
+    if (ClientToScreen(hwnd, &pt)) {
+        XPUSHs(sv_2mortal(newSViv((IV)pt.x)));
+        XPUSHs(sv_2mortal(newSViv((IV)pt.y)));
+    }
+
+void
+GetCaretPos(hwnd)
+  HWND hwnd
+INIT:
+  POINT pt;
+PPCODE:
+  AttachWin(hwnd, TRUE);
+  pt.x = pt.y = -1;
+  if (GetCaretPos(&pt))
+  {
+    XPUSHs(sv_2mortal(newSVnv(pt.x)));
+    XPUSHs(sv_2mortal(newSVnv(pt.y)));
+  }
+  AttachWin(hwnd, FALSE);
+
+HWND 
+GetFocus(hwnd)
+  HWND hwnd;
+CODE:
+  AttachWin(hwnd, TRUE);
+  RETVAL = GetFocus();
+  AttachWin(hwnd, FALSE);
+OUTPUT:
+  RETVAL
+
+HWND 
+GetActiveWindow(hwnd)
+  HWND hwnd;
+CODE:
+  AttachWin(hwnd, TRUE);
+  RETVAL = GetActiveWindow();
+  AttachWin(hwnd, FALSE);
+OUTPUT:
+  RETVAL
+
+HWND 
+GetForegroundWindow()
+CODE:
+  RETVAL = GetForegroundWindow();
+OUTPUT:
+  RETVAL
+
+HWND SetActiveWindow(hwnd)
+  HWND hwnd;
+CODE:
+  AttachWin(hwnd, TRUE);
+  RETVAL = SetActiveWindow(hwnd);
+  AttachWin(hwnd, FALSE);
+OUTPUT:
+  RETVAL
+
+BOOL
+EnableWindow(hwnd, fEnable)
+  HWND hwnd
+  BOOL fEnable
+CODE:
+  RETVAL = EnableWindow(hwnd, fEnable);
+OUTPUT:
+  RETVAL
+
+BOOL
+IsWindowEnabled(hwnd)
+  HWND hwnd
+CODE:
+  RETVAL = IsWindowEnabled(hwnd);
+OUTPUT:
+  RETVAL
+
+BOOL
+IsWindowVisible(hwnd)
+  HWND hwnd
+CODE:
+  RETVAL = IsWindowVisible(hwnd);
+OUTPUT:
+  RETVAL
+
+BOOL
+ShowWindow(hwnd, nCmdShow)
+  HWND hwnd
+  int nCmdShow
+CODE:
+  AttachWin(hwnd, TRUE);
+  RETVAL = ShowWindow(hwnd, nCmdShow);
+  AttachWin(hwnd, FALSE);
+OUTPUT:
+  RETVAL        
+    
+void 
+ScreenToNorm(x,y)
+    int x;
+    int y;
+    PREINIT:
+        int hor,ver;
+    PPCODE:
+        hor = GetSystemMetrics(SM_CXSCREEN);
+        ver = GetSystemMetrics(SM_CYSCREEN);
+        x = MulDiv(x, 65536, hor);
+        y = MulDiv(y, 65536, ver);
+        XPUSHs(sv_2mortal(newSViv((IV)x)));
+        XPUSHs(sv_2mortal(newSViv((IV)y)));    
+
+
+void 
+NormToScreen(x,y)
+    int x;
+    int y;
+    PREINIT:
+        int hor,ver;
+    PPCODE:
+        hor = GetSystemMetrics(SM_CXSCREEN);
+        ver = GetSystemMetrics(SM_CYSCREEN);
+        x = MulDiv(x, hor, 65536);
+        y = MulDiv(y, ver, 65536);
+        XPUSHs(sv_2mortal(newSViv((IV)x)));
+        XPUSHs(sv_2mortal(newSViv((IV)y)));
+
+void
+GetScreenRes()
+    PREINIT:
+        int hor,ver;
+    PPCODE:
+        hor = GetSystemMetrics(SM_CXSCREEN);
+        ver = GetSystemMetrics(SM_CYSCREEN);
+        XPUSHs(sv_2mortal(newSViv((IV)hor)));
+        XPUSHs(sv_2mortal(newSViv((IV)ver)));
+
+void 
+GetWindowRect(hWnd)
+    HWND hWnd;
+    PREINIT:
+        RECT rect;
+    PPCODE:
+        GetWindowRect(hWnd,&rect);
+        XPUSHs(sv_2mortal(newSViv((IV)rect.left)));
+        XPUSHs(sv_2mortal(newSViv((IV)rect.top)));
+        XPUSHs(sv_2mortal(newSViv((IV)rect.right)));
+        XPUSHs(sv_2mortal(newSViv((IV)rect.bottom))); 

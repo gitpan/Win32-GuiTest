@@ -1,5 +1,5 @@
 #
-# $Id: GuiTest.pm,v 1.6 2001/06/02 21:46:20 erngui Exp $
+# $Id: GuiTest.pm,v 1.10 2001/06/17 19:31:33 erngui Exp $
 #
 =head1 NAME
 
@@ -64,7 +64,7 @@ include more GUI testing functions).
 
 =head1 VERSION
 
-    1.00
+    1.1
 
 =head1 CHANGES
 
@@ -87,9 +87,7 @@ include more GUI testing functions).
 	SetFocus
 
     - Ported FindWindowLike (MS-KB, Article ID: Q147659) from VB to
-      Perl. Instead of using "like", I used Perl regexps. Why
-      didn't Jeffrey Friedl include VB in "Mastering Regular
-      Expressions"? ;-). 
+      Perl. Instead of using VB's "like", I used Perl regexps.
 	
 0.03  Sun Oct 31 18:31:52 1999
 
@@ -173,14 +171,41 @@ include more GUI testing functions).
 
     - Added 'eg\spy--.pl' to the distribution.
 
-    
+1.10 Sun Jun 17 19:54:27 2001
+
+    - Added GetWindowRect, GetScreenRes, ScreenToNorm and NormToScreen,
+      following suggestion and code from Frank van Dijk <fvdijk@oke.nl>.
+
+    - Added SendMessage, PostMessage, GetCursorPos, AttachWin,
+      additional SendKeys flags (Windows keys and context menu),
+      WMSetText, GetCaretPos, GetFocus, GetActiveWindow, GetForegroundWindow,
+      SetActiveWindow, EnableWindow, IsWindowEnabled, IsWindowVisible and
+      ShowWindow (+ constants to use it).
+                             
+      Thanks to Jarek Jurasz <jurasz@imb.uni-karlsruhe.de> for all of them.
+
+      Jarek also provided two scripts: 'eg\showmouse.pl' and 'eg\showwin.pl'.
+      I found showwin very interesting (if somewhat dangerous!).
+
+      He also fixed an export list problem (WMGetKey was mentioned instead
+      of WMGetText) and added export tags :ALL and :SW, so that full module
+      functionality can be imported with
+
+                   use Win32::GuiTest qw(:ALL :SW);
+
+    - Added IsWindow, ScreenToClient, ClientToScreen, IsCheckedButton and
+      IsGrayedButton.
+
+    - SendKeys now takes an optional parameter to change the default 50 ms
+      delay between keystrokes. Suggested by Wilson P. Snyder II
+      <wsnyder@world.std.com>. 
     
 =cut
 
 package Win32::GuiTest;
 
 use strict;
-use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $debug);
+use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $debug %EXPORT_TAGS);
 
 require Exporter;
 require DynaLoader;
@@ -194,16 +219,70 @@ require AutoLoader;
 	
 );
 
-@EXPORT_OK = qw(SendKeys FindWindowLike SetForegroundWindow
-                GetDesktopWindow GetWindow GetWindowText GetClassName
-                GetParent GetWindowID GetWindowLong $debug SendMouse
-                SendLButtonUp SendLButtonDown
-                SendMButtonUp SendMButtonDown
-                SendRButtonUp SendRButtonDown
-                SendMouseMoveAbs MouseMoveAbsPix SendMouseMoveRel
-                WMGetText IsChild GetChildDepth GetChildWindows);
+@EXPORT_OK = qw(
+                $debug
+                ClientToScreen
+                FindWindowLike
+                GetChildDepth
+                GetChildWindows
+                GetClassName
+                GetCursorPos
+                GetDesktopWindow
+                GetParent
+                GetScreenRes
+                GetWindow
+                GetWindowID
+                GetWindowLong
+                GetWindowRect
+                GetWindowText
+                IsCheckedButton
+                IsChild
+                IsGrayedButton
+                IsWindow
+                MouseMoveAbsPix
+                NormToScreen
+                PostMessage
+                ScreenToClient
+                ScreenToNorm
+                SendKeys
+                SendLButtonDown
+                SendLButtonUp
+                SendMButtonDown
+                SendMButtonUp
+                SendMessage
+                SendMouse
+                SendMouseMoveAbs
+                SendMouseMoveRel
+                SendRButtonDown
+                SendRButtonUp
+                SetForegroundWindow
+                WMGetText
+                EnableWindow
+                GetActiveWindow
+                GetCaretPos
+                GetCursorPos
+                GetFocus
+                GetForegroundWindow
+                IsWindowEnabled
+                IsWindowVisible
+                PostMessage
+                SendMessage
+                SetActiveWindow
+                ShowWindow
+                WMSetText
+                );
 
-$VERSION = '1.0';
+%EXPORT_TAGS = (
+    'ALL' => \@EXPORT_OK,
+    'SW' => [qw(SW_HIDE SW_SHOWNORMAL
+    SW_NORMAL SW_SHOWMINIMIZED SW_SHOWMAXIMIZED SW_MAXIMIZE SW_SHOWNOACTIVATE
+    SW_SHOW SW_MINIMIZE SW_SHOWMINNOACTIVE SW_SHOWNA SW_RESTORE SW_SHOWDEFAULT
+    SW_FORCEMINIMIZE SW_MAX)]);
+
+Exporter::export_ok_tags('SW');
+
+                             
+$VERSION = '1.1';
 
 $debug = 0;
 
@@ -212,6 +291,23 @@ bootstrap Win32::GuiTest $VERSION;
 sub GWL_ID      { -12;  }
 sub GW_HWNDNEXT { 2;    }
 sub GW_CHILD    { 5;    }   
+
+sub SW_HIDE             { 0; }
+sub SW_SHOWNORMAL       { 1; }
+sub SW_NORMAL           { 1; }
+sub SW_SHOWMINIMIZED    { 2; }
+sub SW_SHOWMAXIMIZED    { 3; }
+sub SW_MAXIMIZE         { 3; }
+sub SW_SHOWNOACTIVATE   { 4; }
+sub SW_SHOW             { 5; }
+sub SW_MINIMIZE         { 6; }
+sub SW_SHOWMINNOACTIVE  { 7; }
+sub SW_SHOWNA           { 8; }
+sub SW_RESTORE          { 9; }
+sub SW_SHOWDEFAULT      { 10; }
+sub SW_FORCEMINIMIZE    { 11; }
+sub SW_MAX              { 11; }
+
 
 =head1 FUNCTIONS
 
@@ -223,9 +319,12 @@ sub GW_CHILD    { 5;    }
 When set enables the verbose mode.
 
 
-=item SendKeys KEYS 
+=item SendKeys KEYS [DELAY]
 
-Sends keystrokes to the active window as if typed at the keyboard. 
+Sends keystrokes to the active window as if typed at the keyboard using the
+optional delay between keystrokes (default is 50 ms and should be OK for
+most uses). 
+
 The keystrokes to send are specified in KEYS. There are several
 characters that have special meaning. This allows sending control codes 
 and modifiers:
@@ -235,11 +334,13 @@ and modifiers:
 	^ means CTRL 
 	% means ALT
 
-The parens allow character grouping. You may group several characters, so that a specific keyboard modifier applies to all of them.
+The parens allow character grouping. You may group several characters, so
+that a specific keyboard modifier applies to all of them.
 
 E.g. SendKeys("ABC") <=> SendKeys("+(abc)")
 
-The curly braces are used to quote special characters (SendKeys("{+}{{}") sends a '+' and a '{'). You can also use them to specify certain named actions:
+The curly braces are used to quote special characters (SendKeys("{+}{{}")
+sends a '+' and a '{'). You can also use them to specify certain named actions:
 
 	Name          Action
 
@@ -272,7 +373,10 @@ The curly braces are used to quote special characters (SendKeys("{+}{{}") sends 
         {SPC}         Spacebar
         {SPACE}       Spacebar
         {SPACEBAR}    Spacebar
-
+        {LWI}         Left Windows Key
+        {RWI}         Right Windows Key 
+        {APP}         Open Context Menu Key
+    
 All these named actions take an optional integer argument, like in {RIGHT 5}. 
 For all of them, except PAUSE, the argument means a repeat count. For PAUSE
 it means the number of milliseconds SendKeys should pause before proceding.
@@ -281,6 +385,20 @@ In this implementation, SendKeys always returns after sending the keystrokes.
 There is no way to tell if an application has processed those keys when the
 function returns. 
 
+=back
+
+=cut
+
+
+sub SendKeys {
+    my $keys  = shift;
+    my $delay = shift;
+    $delay = 50 unless defined($delay);
+    #print "<$delay>";
+    SendKeysImp($keys, $delay);
+}
+
+    
 
 =item SendMouse COMMAND
 

@@ -52,7 +52,7 @@ DESCRIPTION
     plan to include more GUI testing functions).
 
 VERSION
-        1.00
+        1.1
 
 CHANGES
     0.01 Wed Aug 12 21:58:13 1998
@@ -73,9 +73,7 @@ CHANGES
             SetFocus
 
         - Ported FindWindowLike (MS-KB, Article ID: Q147659) from VB to
-          Perl. Instead of using "like", I used Perl regexps. Why
-          didn't Jeffrey Friedl include VB in "Mastering Regular
-          Expressions"? ;-). 
+          Perl. Instead of using VB's "like", I used Perl regexps.
         
     0.03 Sun Oct 31 18:31:52 1999
 
@@ -158,14 +156,46 @@ CHANGES
 
         - Added 'eg\spy--.pl' to the distribution.
 
+    1.10 Sun Jun 17 19:54:27 2001
+
+        - Added GetWindowRect, GetScreenRes, ScreenToNorm and NormToScreen,
+          following suggestion and code from Frank van Dijk <fvdijk@oke.nl>.
+
+        - Added SendMessage, PostMessage, GetCursorPos, AttachWin,
+          additional SendKeys flags (Windows keys and context menu),
+          WMSetText, GetCaretPos, GetFocus, GetActiveWindow, GetForegroundWindow,
+          SetActiveWindow, EnableWindow, IsWindowEnabled, IsWindowVisible and
+          ShowWindow (+ constants to use it).
+                             
+          Thanks to Jarek Jurasz <jurasz@imb.uni-karlsruhe.de> for all of them.
+
+          Jarek also provided two scripts: 'eg\showmouse.pl' and 'eg\showwin.pl'.
+          I found showwin very interesting (if somewhat dangerous!).
+
+          He also fixed an export list problem (WMGetKey was mentioned instead
+          of WMGetText) and added export tags :ALL and :SW, so that full module
+          functionality can be imported with
+
+                       use Win32::GuiTest qw(:ALL :SW);
+
+        - Added IsWindow, ScreenToClient, ClientToScreen, IsCheckedButton and
+          IsGrayedButton.
+
+        - SendKeys now takes an optional parameter to change the default 50 ms
+          delay between keystrokes. Suggested by Wilson P. Snyder II
+          <wsnyder@world.std.com>. 
+    
 FUNCTIONS
     $debug  When set enables the verbose mode.
 
-    SendKeys KEYS
+    SendKeys KEYS [DELAY]
             Sends keystrokes to the active window as if typed at the
-            keyboard. The keystrokes to send are specified in KEYS. There
-            are several characters that have special meaning. This allows
-            sending control codes and modifiers:
+            keyboard using the optional delay between keystrokes (default is
+            50 ms and should be OK for most uses).
+
+            The keystrokes to send are specified in KEYS. There are several
+            characters that have special meaning. This allows sending
+            control codes and modifiers:
 
                     ~ means ENTER
                     + means SHIFT 
@@ -213,7 +243,10 @@ FUNCTIONS
                     {SPC}         Spacebar
                     {SPACE}       Spacebar
                     {SPACEBAR}    Spacebar
-
+                    {LWI}         Left Windows Key
+                    {RWI}         Right Windows Key 
+                    {APP}         Open Context Menu Key
+    
             All these named actions take an optional integer argument, like
             in {RIGHT 5}. For all of them, except PAUSE, the argument means
             a repeat count. For PAUSE it means the number of milliseconds
@@ -224,35 +257,35 @@ FUNCTIONS
             processed those keys when the function returns.
 
     SendMouse COMMAND
-            This function emulates mouse input. The COMMAND parameter is a
-            string containing one or more of the following substrings:
+    This function emulates mouse input. The COMMAND parameter is a string
+    containing one or more of the following substrings:
 
-                    {LEFTDOWN}    left button down
-                    {LEFTUP}      left button up
-                    {MIDDLEDOWN}  middle button down
-                    {MIDDLEUP}    middle button up
-                    {RIGHTDOWN}   right button down
-                    {RIGHTUP}     right button up
-                    {LEFTCLICK}   left button single click
-                    {MIDDLECLICK} middle button single click
-                    {RIGHTCLICK}  right button single click
-                    {ABSx,y}      move to absolute coordinate ( x, y )
-                    {RELx,y}      move to relative coordinate ( x, y )
+            {LEFTDOWN}    left button down
+            {LEFTUP}      left button up
+            {MIDDLEDOWN}  middle button down
+            {MIDDLEUP}    middle button up
+            {RIGHTDOWN}   right button down
+            {RIGHTUP}     right button up
+            {LEFTCLICK}   left button single click
+            {MIDDLECLICK} middle button single click
+            {RIGHTCLICK}  right button single click
+            {ABSx,y}      move to absolute coordinate ( x, y )
+            {RELx,y}      move to relative coordinate ( x, y )
 
-            Note: Absolute mouse coordinates range from 0 to 65535. Relative
-            coordinates can be positive or negative. If you need pixel
-            coordinates you can use MouseMoveAbsPix.
+    Note: Absolute mouse coordinates range from 0 to 65535. Relative
+    coordinates can be positive or negative. If you need pixel coordinates
+    you can use MouseMoveAbsPix.
 
-            Also equivalent low-level functions are available:
+    Also equivalent low-level functions are available:
 
-                SendLButtonUp()
-                    SendLButtonDown()
-                    SendMButtonUp()
-                    SendMButtonDown()
-                    SendRButtonUp()
-                    SendRButtonDown()
-                    SendMouseMoveRel(x,y)
-                SendMouseMoveAbs(x,y)
+        SendLButtonUp()
+            SendLButtonDown()
+            SendMButtonUp()
+            SendMButtonDown()
+            SendRButtonUp()
+            SendRButtonDown()
+            SendMouseMoveRel(x,y)
+        SendMouseMoveAbs(x,y)
 
     MouseMoveAbsPix(X,Y)
             Move the mouse cursor to the screen pixel indicated as

@@ -1,4 +1,4 @@
-# $Id: test.pl,v 1.6 2001/06/02 21:46:20 erngui Exp $
+# $Id: test.pl,v 1.9 2001/06/17 19:24:42 erngui Exp $
 #
 # Before `make install' is performed this script should be runnable with
 # `make test'. After `make install' it should work as `perl test.pl'
@@ -7,7 +7,7 @@
 
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
-BEGIN { $| = 1; print "1..15\n"; }
+BEGIN { $| = 1; print "1..26\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Win32::GuiTest qw/
     FindWindowLike
@@ -15,10 +15,18 @@ use Win32::GuiTest qw/
     GetChildWindows
     GetClassName
     GetDesktopWindow
+    GetScreenRes
+    GetWindowRect
     GetWindowText
+    IsCheckedButton
+    IsWindow
     SendKeys
     SetForegroundWindow
     WMGetText
+    MouseMoveAbsPix
+    SendLButtonDown
+    SendLButtonUp
+    GetCursorPos
     /;
 $loaded = 1;
 print "ok 1\n";
@@ -82,16 +90,19 @@ sleep 1;
 print "not " unless scalar @windows == 1;
 print "ok 9\n";
 
-SendKeys(<<EOM);
+SendKeys(<<EOM, 10);
     This is a test message,
     but also a little demo for the
     SendKeys function.
     3, 2, 1, 0...
-    Closing Notepad...{PAU 400}%{F4}{TAB}{ENTER}
+    Closing Notepad...
 EOM
+    
+SendKeys("{PAU 1000}%{F4}{TAB}{ENTER}");
+
 
 # We closed it so there should be no notepad open
-sleep 1;
+#sleep 1;
 @windows = FindWindowLike(0, "", "Notepad");
 print "not " unless scalar @windows == 0;
 print "ok 10\n";
@@ -132,9 +143,80 @@ while (scalar(@next) > scalar(@wins)) {
     @next = FindWindowLike($desk, "", "", undef, $depth+1);
 }
 
-# The maximun reached depth should contain all the windows
+# The maximum reached depth should contain all the windows
 print "not " unless FindWindowLike($desk, "", "", undef, $depth) == @all;
 print "ok 15\n";
 
+# The maximum reached depth should contain all the windows
+my ($x, $y) = GetScreenRes();
+print "not " unless $x > 0 and $y > 0;
+print "ok 16\n";
 
+# Window size of the desktop should be bigger or the same as the screen resolution
+# Always???
+my ($left, $top, $right, $bottom) = GetWindowRect($desk);
+print "not " unless ($right-$left) >= $x and ($bottom-$top) >= $y;
+print "ok 17\n";
+
+# Do some tricks with the calculator
+system("start calc");
+sleep 1;
+my ($calc) = FindWindowLike($desk, undef, "^SciCalc\$");
+print "not " unless IsWindow($calc);
+SetForegroundWindow($calc);
+print "ok 18\n";
+SendKeys("1969");
+my ($result) = FindWindowLike($calc, "1969");
+print "not " unless IsWindow($result);
+print "ok 19\n";
+
+#Find the Hex radio button
+sleep 1;
+my ($hex) = FindWindowLike($calc, "Hex");
+print "not " unless IsWindow($hex);
+print "ok 20\n";
+
+#Find the Bin, Oct and Dec radio buttons
+my ($bin) = FindWindowLike($calc, "Bin");
+my ($oct) = FindWindowLike($calc, "Oct");
+my ($dec) = FindWindowLike($calc, "Dec");
+
+print "not " unless IsWindow($bin) and IsWindow($oct) and IsWindow($dec);
+print "ok 21\n";
+
+print "not " if IsCheckedButton($bin) or
+                IsCheckedButton($oct) or
+                IsCheckedButton($hex);
+print "ok 22\n";
+
+print "not " unless IsCheckedButton($dec);
+print "ok 23\n";
+
+# Click on the Hex radio button
+my ($x, $y) = GetWindowRect($hex);
+my ($cx, $cy) = GetCursorPos();
+MouseMoveAbsPix($x+1,$y+1);
+sleep 1;
+SendLButtonDown();
+SendLButtonUp();
+sleep 1;
+MouseMoveAbsPix($cx,$cy);
+
+print "not " if IsCheckedButton($dec);
+print "ok 24\n";
+
+print "not " unless IsCheckedButton($hex);
+print "ok 25\n";
+
+
+# The result window contain "1969" in hex
+sleep 1;
+my ($result) = FindWindowLike($calc, "7B1");
+print "not " unless IsWindow($result);
+print "ok 26\n";
+
+# Close calc
+SendKeys("%{F4}");
+
+ 
 

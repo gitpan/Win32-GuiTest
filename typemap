@@ -1,12 +1,14 @@
 BOOL			T_IV
 LONG			T_IV
 HANDLE			T_IV
-HWND              T_IV
+HWND                    T_IV
 HKEY			T_IV
 SECURITY_INFORMATION	T_UV
 DWORD			T_UV
-UINT            T_UV
+UINT                    T_UV
 REGSAM			T_UV
+WPARAM                  T_UV
+LPARAM                  T_IV
 
 #############################################################################
 INPUT
