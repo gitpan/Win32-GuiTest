@@ -583,3 +583,21 @@ GetChildWindows(hWnd)
         }
 		safefree(children.windows);
         
+
+SV*
+WMGetText(hwnd)
+    HWND hwnd
+    CODE:
+        SV* sv;
+        char* text;
+        int len = SendMessage(hwnd, WM_GETTEXTLENGTH, 0, 0L); 
+        text = (char*)safemalloc(len+1);
+        if (text != 0) {
+            SendMessage(hwnd, WM_GETTEXT, (WPARAM)len + 1, (LPARAM)text); 
+            RETVAL = newSVpv(text, len);
+            safefree(text);
+        } else {
+            RETVAL = 0;
+        }
+    OUTPUT:
+        RETVAL

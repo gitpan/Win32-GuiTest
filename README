@@ -55,7 +55,7 @@ DESCRIPTION
     plan to include more GUI testing functions).
 
 VERSION
-        0.07
+        0.08
 
 CHANGES
     0.01 Wed Aug 12 21:58:13 1998
@@ -135,7 +135,13 @@ CHANGES
           to test this functionality.
 
         - Added binaries for the ActivePerl distribution. 
-    
+
+    0.08 Sun Dec 17 19:33:07 2000
+
+        - Added WMGetText to allow getting the content of an EDIT window. See 
+          'eg\notepad_text.pl' for more details. 
+          Thanks to Mauro <m_servizi@yahoo.it> from Italy for the idea. 
+
 FUNCTIONS
     $debug  When set enables the verbose mode.
 
@@ -225,29 +231,31 @@ FUNCTIONS
                 SendMouseMoveAbs(x,y)
 
     MouseMoveAbsPix(X,Y)
-    Move the mouse cursor to the screen pixel indicated as parameter.
+            Move the mouse cursor to the screen pixel indicated as
+            parameter.
 
-        # Moves to x=200, y=100 in pixel coordinates.
-        MouseMoveAbsPix(200, 100); 
+                # Moves to x=200, y=100 in pixel coordinates.
+                MouseMoveAbsPix(200, 100); 
         
     FindWindowLike WINDOW, TITLEPATTERN, CLASSPATTERN, CHILDID
-    Finds the window handles of the windows matching the specified
-    parameters and returns them as a list.
+            Finds the window handles of the windows matching the specified
+            parameters and returns them as a list.
 
-    You may specify the handle of the window to search under. The routine
-    searches through all of this windows children and their children
-    recursively. If 'undef' then the routine searches through all windows.
-    There is also a regexp used to match against the text in the window
-    caption and another regexp used to match against the text in the window
-    class. If you pass a child ID number, the functions will only match
-    windows with this id. In each case undef matches everything.
+            You may specify the handle of the window to search under. The
+            routine searches through all of this windows children and their
+            children recursively. If 'undef' then the routine searches
+            through all windows. There is also a regexp used to match
+            against the text in the window caption and another regexp used
+            to match against the text in the window class. If you pass a
+            child ID number, the functions will only match windows with this
+            id. In each case undef matches everything.
 
 COPYRIGHT
     The SendKeys function is based on the Delphi sourcecode published by Al
     Williams (http://www.al-williams.com/awc/) in Dr.Dobbs
     (http://www.ddj.com/ddj/1997/careers1/wil2.htm).
 
-    Copyright (c) 1998-2000 Ernesto Guisado. All rights reserved. This
+    Copyright (c) 1998-2001 Ernesto Guisado. All rights reserved. This
     program is free software; You may distribute it and/or modify it under
     the same terms as Perl itself.
 

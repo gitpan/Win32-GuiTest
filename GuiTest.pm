@@ -55,7 +55,7 @@ include more GUI testing functions).
 
 =head1 VERSION
 
-    0.07
+    0.08
 
 =head1 CHANGES
 
@@ -138,6 +138,13 @@ include more GUI testing functions).
       to test this functionality.
 
     - Added binaries for the ActivePerl distribution. 
+
+0.08 Sun Dec 17 19:33:07 2000
+
+    - Added WMGetText to allow getting the content of an EDIT window. See 
+      'eg\notepad_text.pl' for more details. 
+      Thanks to Mauro <m_servizi@yahoo.it> from Italy for the idea. 
+
     
 =cut
 
@@ -164,10 +171,10 @@ GetDesktopWindow GetWindow GetWindowText GetClassName GetParent
         SendLButtonUp SendLButtonDown
         SendMButtonUp SendMButtonDown
         SendRButtonUp SendRButtonDown
-        SendMouseMoveAbs MouseMoveAbsPix SendMouseMoveRel);
+        SendMouseMoveAbs MouseMoveAbsPix SendMouseMoveRel WMGetKey);
 
 
-$VERSION = '0.7';
+$VERSION = '0.8';
 
 $debug = 0;
 
@@ -311,6 +318,8 @@ sub SendMouse {
 }
 
 
+=over 8
+
 =item MouseMoveAbsPix(X,Y)
 
 Move the mouse cursor to the screen pixel indicated as parameter.
@@ -443,7 +452,7 @@ The SendKeys function is based on the Delphi sourcecode
 published by Al Williams (http://www.al-williams.com/awc/) 
 in Dr.Dobbs (http://www.ddj.com/ddj/1997/careers1/wil2.htm).
 
-Copyright (c) 1998-2000 Ernesto Guisado. All rights reserved. This program 
+Copyright (c) 1998-2001 Ernesto Guisado. All rights reserved. This program 
 is free software; You may distribute it and/or modify it under the 
 same terms as Perl itself.
 
