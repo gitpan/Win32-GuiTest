@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.7 2004/04/02 02:27:18 ctrondlp Exp $
+# $Id: guitest.pm,v 1.13 2004/05/30 18:01:15 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -69,6 +69,10 @@ include more GUI testing functions).
 
 I've created a Yahoo Group for the module that you can join at
    http://groups.yahoo.com/group/perlguitest/join
+
+Also, an initial version of a script recording application has been written to use with this 
+module.  A copy of it may be found with this distribution (Recorder\Win32GuiTest.exe)
+or can be obtained at http://dkp.itgo.com
 
 =cut
 
@@ -142,7 +146,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.50.1-ad';
+$VERSION = '1.50.2-ad';
 
 $debug = 0;
 
@@ -398,7 +402,7 @@ sub PushButton {
     my $button = shift;
     my $delay  = shift;
 
-    PushChildButton(GetForegroundWindow(), $button, $delay);
+    return PushChildButton(GetForegroundWindow(), $button, $delay);
 }
 
 =item PushChildButton($parent,$button[,$delay])
@@ -431,15 +435,16 @@ sub PushChildButton {
     $delay = 0 unless defined($delay);
     for my $child (GetChildWindows($parent)) {
         # Is correct text or correct window ID?
-	if (MatchTitleOrId($child, $button)) {
-            # Need to use PostMessage.  SendMessage won't return when certain dialogs come up.
+	if (MatchTitleOrId($child, $button) && IsWindowEnabled($child)) {
+	    # Need to use PostMessage.  SendMessage won't return when certain dialogs come up.
 	    PostMessage($child, WM_LBUTTONDOWN(), 0, 0);
 	    # Allow for user to see that button is being pressed by waiting some ms.
 	    select(undef, undef, undef, $delay) if $delay;
-            PostMessage($child, WM_LBUTTONUP(), 0, 0);
-            return;
+          PostMessage($child, WM_LBUTTONUP(), 0, 0);
+	    return(1);
 	}
     }
+    return(0);
 }
 
 =item WaitWindowLike($parent,$wndtitle,$wndclass,$wndid,$depth,$wait)
@@ -912,7 +917,7 @@ __END__
 
 =head1 VERSION
 
-    1.50.1-ad
+    1.50.2-ad
 
 =head1 CHANGES
 

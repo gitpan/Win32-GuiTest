@@ -1,8 +1,9 @@
+\bCVS\b
 [#~]$
 \.bak$
-\.tar\.gz$
 \.xls$
 \.zip$
+\.tmp$
 \bblib/
 \bdevel/
 \bmisc/
