@@ -98,6 +98,15 @@ CHANGES
 
         - Code cleanup to make adding new keywords easier.
 
+    0.06 Sun Mar 12 01:51:18 2000
+
+        - Added support for sending mouse events.
+          Thanks to Ben Shern <shernbj@louisville.stortek.com> for the idea 
+          and original code. Also added 'eg\paint.pl' to the distribution to
+          test this functionality.
+
+        - Code cleanup.
+
 FUNCTIONS
     $debug  When set enables the verbose mode.
 
@@ -157,6 +166,34 @@ FUNCTIONS
             sending the keystrokes. There is no way to tell if an
             application has processed those keys when the function
             returns.
+
+    SendMouse COMMAND
+            This function emulates mouse input. The COMMAND
+            parameter is a string containing one or more of the
+            following substrings: {LEFTDOWN} left button down
+            {LEFTUP} left button up {MIDDLEDOWN} middle button down
+            {MIDDLEUP} middle button up {RIGHTDOWN} right button
+            down {RIGHTUP} right button up {LEFTCLICK} left button
+            single click {MIDDLECLICK} middle button single click
+            {RIGHTCLICK} right button single click {ABSx,y} move to
+            absolute coordinate ( x, y ) {RELx,y} move to relative
+            coordinate ( x, y )
+
+            Note: Absolute mouse coordinates range from 0 to 65535.
+            Relative coordinates can be positive or negative.
+
+            Also equivalent low-level functions are available:
+
+                SendLButtonUp()
+                    SendLButtonDown()
+                    SendMButtonUp()
+                    SendMButtonDown()
+                    SendRButtonUp()
+                    SendRButtonDown()
+                    SendMouseMoveRel(x,y)
+                SendMouseMoveAbs(x,y)
+                    
+            =back
 
     FindWindowLike WINDOW, TITLEPATTERN, CLASSPATTERN, CHILDID
             Finds the window handles of the windows matching the

@@ -1,11 +1,11 @@
 /* 
- *	Test.xs
+ *	GuiTest.xs
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *	published by Al Williams <http://www.al-williams.com/awc/> 
  *	in Dr.Dobbs <http://www.ddj.com/ddj/1997/careers1/wil2.htm>
  *	
- *	Copyright (c) 1998 by Ernesto Guisado <erngui@acm.org>
+ *	Copyright (c) 1998-2000 by Ernesto Guisado <erngui@acm.org>
  *
  *  You may distribute under the terms of either the GNU General Public
  *  License or the Artistic License.
@@ -210,10 +210,6 @@ void procbrace(
 		for (k=0;k<(int)strlen(tmp); k++)
 			tmp[k]=toupper(tmp[k]);
 		
-		if (tmp[0]=='F') {  /* F Keys */
-			*key=GetNum(tmp,2,&j)+VK_F1-1;
-		}
-
 		/* chop token to 3 characters or less */
 		if (strlen(tmp)>3) 
 			tmp[3]='\0';
@@ -333,9 +329,68 @@ BOOL CALLBACK AddWindowChild(
   return TRUE;
 }
 
+/*  Same as mouse_event but without wheel and with time-out.
+ */
+VOID simple_mouse(
+  DWORD dwFlags, // flags specifying various motion/click variants
+  DWORD dx,      // horizontal mouse position or position change
+  DWORD dy      // vertical mouse position or position change
+ )
+{
+    char dstr[256];
+    sprintf(dstr, "simple_mouse(%d, %d, %d)\n", dwFlags, dx, dy);
+    OutputDebugString(dstr);
+    mouse_event(dwFlags, dx, dy, 0, 0);
+    Sleep (10);
+}
+
 MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest		
 
 PROTOTYPES: DISABLE
+
+void
+SendLButtonUp()
+	CODE:
+        simple_mouse(MOUSEEVENTF_LEFTUP, 0, 0);
+
+void
+SendLButtonDown()
+	CODE:
+        simple_mouse(MOUSEEVENTF_LEFTDOWN, 0, 0);
+
+void
+SendMButtonUp()
+	CODE:
+        simple_mouse(MOUSEEVENTF_MIDDLEUP, 0, 0);
+
+void
+SendMButtonDown()
+	CODE:
+        simple_mouse(MOUSEEVENTF_MIDDLEDOWN, 0, 0);
+
+void
+SendRButtonUp()
+	CODE:
+        simple_mouse(MOUSEEVENTF_RIGHTUP, 0, 0);
+
+void
+SendRButtonDown()
+	CODE:
+        simple_mouse(MOUSEEVENTF_RIGHTDOWN, 0, 0);
+
+void
+SendMouseMoveRel(x,y)
+    int x;
+    int y;
+	CODE:
+        simple_mouse(MOUSEEVENTF_MOVE, x, y);
+
+void
+SendMouseMoveAbs(x,y)
+	int x;
+    int y;
+	CODE:
+        simple_mouse(MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE, x, y);
 
 void
 SendKeys(s)

@@ -105,6 +105,14 @@ include more GUI testing functions).
 
     - Code cleanup to make adding new keywords easier.
 
+0.06 Sun Mar 12 01:51:18 2000
+
+    - Added support for sending mouse events.
+      Thanks to Ben Shern <shernbj@louisville.stortek.com> for the idea 
+      and original code. Also added 'eg\paint.pl' to the distribution to
+      test this functionality.
+
+    - Code cleanup.
 
 =cut
 
@@ -127,10 +135,14 @@ require AutoLoader;
 
 @EXPORT_OK = qw(SendKeys FindWindowLike SetForegroundWindow
 GetDesktopWindow GetWindow GetWindowText GetClassName GetParent
-		GetWindowID GetWindowLong $debug);
+		GetWindowID GetWindowLong $debug SendMouse
+        SendLButtonUp SendLButtonDown
+        SendMButtonUp SendMButtonDown
+        SendRButtonUp SendRButtonDown
+        SendMouseMoveAbs SendMouseMoveRel);
 
 
-$VERSION = '0.5';
+$VERSION = '0.6';
 
 $debug = 0;
 
@@ -202,6 +214,73 @@ For all of them, except PAUSE, the argument means a repeat count. For PAUSE it m
 
 In this implementation, SendKeys always returns after sending the keystrokes. There is no way to tell if an application has processed those keys when the function returns. 
 
+
+=item SendMouse COMMAND
+
+This function emulates mouse input.  The COMMAND parameter is a string
+containing one or more of the following substrings:
+	{LEFTDOWN}        left button down
+	{LEFTUP}          left button up
+	{MIDDLEDOWN}      middle button down
+	{MIDDLEUP}        middle button up
+	{RIGHTDOWN}       right button down
+	{RIGHTUP}         right button up
+	{LEFTCLICK}       left button single click
+	{MIDDLECLICK}     middle button single click
+	{RIGHTCLICK}      right button single click
+	{ABSx,y}          move to absolute coordinate ( x, y )
+	{RELx,y}     	  move to relative coordinate ( x, y )
+
+Note: Absolute mouse coordinates range from 0 to 65535.
+      Relative coordinates can be positive or negative.
+
+Also equivalent low-level functions are available:
+
+    SendLButtonUp()
+	SendLButtonDown()
+	SendMButtonUp()
+	SendMButtonDown()
+	SendRButtonUp()
+	SendRButtonDown()
+	SendMouseMoveRel(x,y)
+    SendMouseMoveAbs(x,y)
+	
+=back
+
+=cut
+
+sub SendMouse {
+	my $command = shift;
+
+	# Split out each command block enclosed in curly braces.
+	my @list = ( $command =~ /{(.+?)}/g );
+	my $item;
+
+	foreach $item ( @list )
+	{
+		if    ( $item =~ /leftdown/i )		{ SendLButtonDown (); }
+		elsif ( $item =~ /leftup/i )		{ SendLButtonUp   (); }
+		elsif ( $item =~ /middledown/i )	{ SendMButtonDown (); }
+		elsif ( $item =~ /middleup/i )		{ SendMButtonUp   (); }
+		elsif ( $item =~ /rightdown/i )		{ SendRButtonDown (); }
+		elsif ( $item =~ /rightup/i )		{ SendRButtonUp   (); }
+		elsif ( $item =~ /leftclick/i )	{
+			SendLButtonDown ();
+			SendLButtonUp ();
+		}
+		elsif ( $item =~ /middleclick/i ) {
+			SendMButtonDown ();
+			SendMButtonUp ();
+		}
+		elsif ( $item =~ /rightclick/i ) {
+			SendRButtonDown ();
+			SendRButtonUp ();
+		}
+		elsif ( $item =~ /abs(-?\d+),(-?\d+)/i ) { SendMouseMoveAbs($1,$2); }
+		elsif ( $item =~ /rel(-?\d+),(-?\d+)/i ) { SendMouseMoveRel($1,$2); }
+		else  { warn "GuiTest: Unmatched mouse command! \n"; }
+	}
+}
 
 =item FindWindowLike WINDOW, TITLEPATTERN, CLASSPATTERN, CHILDID 
 
@@ -307,6 +386,8 @@ sub FindWindowLike {
 sub GetWindowID {
 	return GetWindowLong(shift, GWL_ID);
 }
+
+
 
 
 # Preloaded methods go here.
