@@ -1,7 +1,7 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         Win32-GuiTest
-version:      1.50.2-ad
+version:      1.50.3-ad
 version_from: guitest.pm
 installdirs:  site
 requires:

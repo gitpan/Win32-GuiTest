@@ -2,6 +2,7 @@ changes
 dibsect.cpp
 dibsect.h
 eg/ask.pl
+eg/calc.pl
 eg/excel.pl
 eg/excel2.pl
 eg/fonts.pl
@@ -19,6 +20,8 @@ eg/showcpl.pl
 eg/showmouse.pl
 eg/showwin.pl
 eg/spy--.pl
+eg/spy.pl
+eg/start.pl
 eg/tab.pl
 eg/waitwindow.pl
 eg/which.pl
@@ -26,6 +29,7 @@ eg/winbmp.pl
 eg/wptr.pl
 guitest.pm
 guitest.xs
+Examples.pm
 lib/win32/guitest/cmd.pm
 lib/win32/guitest/guitest.pc
 makedist.pl
@@ -40,7 +44,11 @@ readme.html
 Recorder/Copying.txt
 Recorder/README.txt
 Recorder/Win32GuiTest.exe
+t/02calc.t
+t/basic.t
+t/cpl.t
 t/std.t
+t/which.t
 typemap
 Win32-GuiTest.ppd
 Win32-GuiTest.tar.gz

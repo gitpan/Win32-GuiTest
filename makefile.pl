@@ -25,7 +25,7 @@ my @make = (
 # Add additional settings for the creation of PPD files
 if ($ExtUtils::MakeMaker::VERSION >= 5.43) {
     push @make, 'ABSTRACT_FROM' => 'guitest.pm';
-    push @make, 'AUTHOR' => 'Dennis K. Paulsen (ctrondlpaulsden@yahoo.com)'; # Alternate distribution
+    push @make, 'AUTHOR' => 'Dennis K. Paulsen (ctrondlp@cpan.org)'; # Alternate distribution
 #    push @make, 'AUTHOR' => 'Ernesto Guisado (erngui@acm.org)';
 }
 

@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.13 2004/05/30 18:01:15 ctrondlp Exp $
+# $Id: guitest.pm,v 1.28 2004/12/23 18:49:44 ctrondlp Exp $
 #
 
 =head1 NAME
@@ -31,7 +31,9 @@ Win32::GuiTest - Alternate distribution of Perl GUI Test Utilities.
     nmake test
     nmake install
 
-If you are using ActivePerl 5.6 
+    See more details in the DEVELOPMENT section elswhere in this document.
+
+If you are using ActivePerl 5.6
 (http://www.activestate.com/Products/ActivePerl/index.html) 
 you can install the binary package I am including instead. You will need 
 to enter PPM (Perl Package Manager) from the command-line. Once you have 
@@ -72,7 +74,15 @@ I've created a Yahoo Group for the module that you can join at
 
 Also, an initial version of a script recording application has been written to use with this 
 module.  A copy of it may be found with this distribution (Recorder\Win32GuiTest.exe)
-or can be obtained at http://dkp.itgo.com
+or can be obtained at http://sourceforge.net/projects/winguitest
+
+If the documentation of these functions is not satisfactory, you can 
+try running a search on http://msdn.microsoft.com/ using the name of the function. 
+Some of these functions are described there.
+
+The alternate distribution of this module - the one you are looking at now - has
+its own CVS repository at http://sourceforge.net/projects/winguitest
+Patches to both the code and the documentation are welcome.
 
 =cut
 
@@ -104,10 +114,15 @@ require AutoLoader;
         PushButton PushChildButton ScreenToClient ScreenToNorm SelectTabItem
         SendKeys SendLButtonDown SendLButtonUp SendMButtonDown SendMButtonUp
         SendMessage SendMouse SendMouseMoveAbs SendMouseMoveRel
-        SendRButtonDown SendRButtonUp SetActiveWindow SetForegroundWindow
+        SendRButtonDown SendRButtonUp SetActiveWindow SetFocus SetForegroundWindow
         SetWindowPos ShowWindow TabCtrl_SetCurFocus TabCtrl_GetCurFocus
         TabCtrl_SetCurSel TabCtrl_GetItemCount WMGetText WMSetText WaitWindow
         WaitWindowLike SendRawKey WindowFromPoint
+        GetSubMenu GetMenuItemIndex GetMenuItemId GetMenuItemCount GetMenuItemInfo 
+        GetListViewContents SelListViewItem SelListViewItemText IsListViewItemSel
+	GetTabItems SelTabItem SelTabItemText IsTabItemSel
+        SelTreeViewItemPath GetTreeViewSelPath MouseMoveWheel 
+        SelComboItem SelComboItemText
     )],
     VARS => [ qw(
         $debug
@@ -135,8 +150,9 @@ require AutoLoader;
         VK_RSHIFT VK_LCONTROL VK_RCONTROL VK_LMENU VK_RMENU VK_PROCESSKEY VK_ATTN
         VK_CRSEL VK_EXSEL VK_EREOF VK_PLAY VK_ZOOM VK_NONAME VK_PA1 VK_OEM_CLEAR
         KEYEVENTF_EXTENDEDKEY KEYEVENTF_KEYUP
-    )]
+    )],
 );
+#getLW
 
 @EXPORT_OK= ();
 { my $ref;
@@ -146,7 +162,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.50.2-ad';
+$VERSION = '1.50.3-ad';
 
 $debug = 0;
 
@@ -269,7 +285,7 @@ Also equivalent low-level functions are available:
         SendRButtonUp()
         SendRButtonDown()
         SendMouseMoveRel(x,y)
-    SendMouseMoveAbs(x,y)
+        SendMouseMoveAbs(x,y)
 
 =cut
 
@@ -311,7 +327,15 @@ sub SendMouse {
 Move the mouse cursor to the screen pixel indicated as parameter.
 
   # Moves to x=200, y=100 in pixel coordinates.
-  MouseMoveAbsPix(200, 100); 
+  MouseMoveAbsPix(200, 100);
+
+=cut
+
+=item MouseMoveWheel($change)
+
+  Positive or negative value to direct mouse wheel movement.
+
+=cut
 
 =item FindWindowLike($window,$titleregex,$classregex,$childid,$maxlevel) 
 
@@ -385,6 +409,12 @@ sub DbgShow {
     my $string = shift;
     print $string if $debug;
 }
+
+=item GetWindowID($window)
+
+    Returns the control Id of the specified window.
+
+=cut
 
 sub GetWindowID {
     return GetWindowLong(shift, GWL_ID());
@@ -511,7 +541,13 @@ sub WaitWindow {
     return WaitWindowLike(0, $wndtitle, "", undef, undef, $wait);
 }
 
-    
+=item IsWindowStyle($window, $style)
+
+    Determines if a window has the specified style.  See sample
+    script for more details.
+
+=cut    
+
 # Checks for a specified window style
 sub IsWindowStyle {
     my $hwnd = shift;
@@ -521,6 +557,13 @@ sub IsWindowStyle {
     # Check bitmasked return value for the style.
     return ($rs & $style);
 }
+
+=item IsWindowStyleEx($window, $exstyle)
+
+    Determines if a window has the specified extended
+    style.  See sample script for more details.
+
+=cut    
 
 # Checks for a specified extended window style
 sub IsWindowStyleEx {
@@ -568,6 +611,19 @@ sub FindAndCheck {
     }
 }
 
+=item GetMenu
+
+Using the corresponding library function (see MSDN) it returns a MenuID number
+
+=item GetMenuItemIndex($curr, $menu);
+
+$curr is a MenuId and $menu is the (localized !) name of the menu including the hot
+key:  "Rep&eate"  
+Returns the index of the menu item (-1 if not found) 
+
+=item GetMenuItemCount($menu)
+
+Returns the number of elements in the given menu.
 
 =item MenuSelect($menupath,$window,$menu)
 
@@ -579,6 +635,17 @@ Simple Examples:
 
     # Exit foreground application through system menu
     MenuSelect("&Close", 0, GetSystemMenu(GetForegroundWindow(), FALSE));
+
+=item GetMenuItemInfo($menuHndl, $cnt)
+
+Receives a menu handler (one we got from GetMenu or GetSubMenu) and
+a number (which is the location of the item within the given menu).
+
+Returns a hash of which there are currently 2 keys:
+type can be either "string" or "separator"  - this is the type of the menu item
+text is the visible text of the menu item (provided only for "string" type)
+
+WARNING: This is an experimental function. Its behavior might change.
 
 =cut
 
@@ -602,10 +669,10 @@ sub MenuSelectItem {
     my $curr = $start;
     DbgShow "'$items'\n";
     my @menus = split('\|', $items);
-    for (@menus) {
-        DbgShow "'$_'\n";
+    foreach my $menu (@menus) {
+        DbgShow "'$menu'\n";
         # Look for menu item in current menu level
-        $mi = GetMenuItemIndex($curr, $_);
+        $mi = GetMenuItemIndex($curr, $menu);
         return 0 if $mi == -1; # Error, item not found
         # Go to next menu level
         my $next = GetSubMenu($curr, $mi);
@@ -723,9 +790,22 @@ Returns a handle to the desktop window
 
 =item SV * GetWindowText(hwnd) *
 
+Get the text name of the window as shown on the top of it.
+Beware, this is text depends on localization.
+
 =item $class = GetClassName(hwnd) *
 
+Using the same Windows library function returns the name
+of the class wo which the specified window belongs.
+
+See MSDN for more details.
+
+You can also check out MSDN to see an overview of the Window Classes.
+
 =item HWND GetParent(hwnd) *
+
+A library function (see MSDN) to return the WindowID of the parent window.
+See MSDN for the special cases.
 
 =item long GetWindowLong(hwnd,index) *
 
@@ -735,19 +815,48 @@ See corresponding Windows functions.
 
 =item @wnds = GetChildWindows(hWnd)
 
-Like EnumChildWindows
+Using EnumChildWindows library function (see MSDN) it returns the WindowID 
+of each child window. If the children have their own children the function
+returns them too until the tree ends.
 
 =item BOOL IsChild(hWndParent,hWnd) *
 
-See corresponding Windows function.
+Using the corresponding library function (see MSDN) it returns true
+if the second window is an immediate child or a descendant window of
+the first window.
 
 =item $depth = GetChildDepth(hAncestor,hChild)
 
-=item $res = SendMessage(hwnd,msg,wParam,lParam) *
+Using the GetParent library function in a loop, returns the distance
+between an ancestor window and a child (descendant) window.
+
+Features/bugs:
+If the given "ancsetor" is not really an ancestor, the return value is the distance of child from the root window (0)
+If you supply the same id for both the ancestor and the child you get 1.
+If the ancestor you are checking is not 0 then the distance given is 1 larger than it should be.
+
+see eg\get_child_depth.pl
+
+=item $res = SendMessage(hWnd,Msg,wParam,lParam) *
+
+This is a library function (see MSDN) used by a number of the functions provided by
+Win32::GuiTest. It sends the specified message to a window or windows.
+HWnd is the WindowID or HWND_BROADCAST to send message to all top level windows.
+     Message is not sent to child windows. (If I understand this correctly this means
+     it is sent to all the immediate children of the root window (0).
+Msg  the message
+wParam additional parameter
+lParam additioanl parameter
+
+It is most likely you won't use this directly but through one of the functions
+implemented already in Win32::GuiTest.
+
+See the guitest.xs for some examples.
+
 
 =item $res = PostMessage(hwnd,msg,wParam,lParam) *
 
-See corresponding Windows functions.
+See corresponding Windows library function in MSDN.
 
 =item CheckButton(hwnd) 
 
@@ -759,7 +868,8 @@ See corresponding Windows functions.
 
 =item BOOL IsGrayedButton(hwnd)
 
-The names say it.
+The names say it.  Works on radio buttons and
+checkboxes.  For regular buttons, use IsWindowEnabled.
 
 =item BOOL IsWindow(hwnd) *
 
@@ -802,11 +912,23 @@ The opposite transformation
 
 Returns screen resolution
 
+=item HWND WindowFromPoint(x, y)
+
 =item ($l,$t,$r,$b) = GetWindowRect(hWnd) *
 
 =item ($l,$t,$r,$b) = GetClientRect(hWnd) *
 
 See corresponding Windows functions.
+
+=cut
+
+=item SelComboItem($window, $index)
+
+Selects an item in the combo box based off an index (zero-based).
+
+=item SelComboItemText($window, $txt)
+
+Selects an item in the combo box based off text (case insensitive).
 
 =item $txt = GetComboText(hwnd,index)
 
@@ -842,7 +964,85 @@ Wrapper around keybd_event. Allows sending low-level keys. The first argument is
        SendKeys "{PAUSE 200}";
    }
 
-=item HWND WindowFromPoint(x, y)
+=item GetListViewContents($window)
+
+    Returns a list of the contents of the specified list view.
+
+=cut
+
+=item SelListViewItem($window, $idx, [$multi_select])
+
+    Selects an item in the list view based off an index (zero-based).
+
+	# Select first item, clears out any previous selections.
+	SelListViewItem($win, 0);
+	# Select an *additional* item.
+	SelListViewItem($win, 1, 1);
+
+=cut
+
+=item SelListViewItemText($window, $txt, [$multi_select])
+
+    Selects an item in the list view based off text (case insensitive).
+
+	# Select first item, clears out any previous selections.
+	SelListViewItemText($win, 'Temp');
+	# Select an *additional* item.
+	SelListViewItemText($win, 'cabs', 1);
+
+=cut
+
+=item IsListViewItemSel($window, $txt)
+
+   Determines if the specified list view item is selected.
+
+=cut
+
+=item GetTabItems($window)
+
+    Returns a list of a tab control's labels.
+
+=cut
+
+=item SelTabItem($window, $idx)
+
+    Selects a tab based off an index (zero-based).
+
+=cut
+
+=item SelTabItemText($window, $txt)
+
+    Selects a tab based off text label (case insensitive).
+
+=cut
+
+=item IsTabItemSel($window, $txt)
+
+   Determines if the specified tab item is selected.
+
+=cut
+
+=item SelTreeViewItemPath($window, $path)
+
+    Selects a tree view item based off a "path" (case insensitive).
+
+    # Select Machine item and Processors sub-item.
+    SelTreeViewItemPath($window, "Machine|Processors");
+
+    SelTreeViewItemPath($window, "Item");
+
+=cut
+
+=item GetTreeViewSelPath($window)
+
+   Returns a string containing the path (i.e., "parent|child") of
+   the currently selected tree view item.
+
+   $oldpath = GetTreeViewSelPath($window);
+   SelTreeViewItemPath($window, "Parent|Child");
+   SelTreeViewItemPath($window, $oldpath);
+
+=cut
 
 =back
 
@@ -915,9 +1115,92 @@ Destroys the contents of the DIB section.
 1;
 __END__
 
+
+=head1 DEVELOPMENT
+
+If you would like to participate in the development of this module there are 
+several thing that need to be done. For some of them you only need Perl
+and the latest source of the module from CVS for others you'll also need to 
+have a C++ compiler.
+
+To get the latest source code you need a CVS client and then do the following:
+
+ cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest login
+ cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/winguitest co Win32-GuiTest
+
+See more detailed explanations here http://sourceforge.net/projects/winguitest/
+
+
+To setup a development environment for compiling the C++ code you can either buy
+Visual Studio with Visual C++ or you can download a few things free of charge from 
+Microsoft. There might be other ways too we have not explored.
+
+The instructions to get the free environment are here:
+
+From http://www.microsoft.com/ download and install:
+
+ 1) Microsoft .NET Framework Version 1.1 Redistributable Package
+ 2) .NET Framework SDK Version 1.1
+
+
+This is not enough as there are a number of header files and libraries that are 
+not included in these distributions. You can get them from Microsoft in two additional
+downloads. For these you will have to be using Internet Explorer.
+Visit 
+
+  http://www.microsoft.com/msdownload/platformsdk/sdkupdate/
+
+and install 
+
+ 1) Core SDK
+ 2) Microsoft Data Access Components 2.7
+
+
+Before you can compile you'll have to open a command prompt and execute the
+C<sdkvars.bat> script from the.NET SDK that will set a number of environment
+variables. In addition you'll have to run the C<setenv.bat> you got with the 
+Core SDK (and located in C:\Program Files\Microsoft SDK) with the appropriate
+parameters. For me this was /XP32 /RETAIL
+
+
+In order to finish the packaging you'll also need the tar, gzip and zip utilities from 
+
+ http://gnuwin32.sourceforge.net/packages.html
+
+I have not tried it yet.
+
+After this you will probably be able to do the normal cycle:
+
+ perl makefile.pl
+ nmake
+ nmake test
+
+ or run
+
+ perl makedist.pl
+
+=head1 TODO
+
+Here are a few items where help would be welcome. 
+
+=head2 Perl only
+
+ Improve Tests
+ Improve documentation
+ Add more examples and explain them
+
+=head2 C++ compiler needed
+
+ Add more calls to the C++ backend
+ Fix current calls
+
+ 32bit custom controls (some already implemented)
+ Possibly Java interfaces
+ Retreive the list of the menu of a given window.
+
 =head1 VERSION
 
-    1.50.2-ad
+    1.50.3-ad
 
 =head1 CHANGES
 
@@ -942,7 +1225,7 @@ Ernesto Guisado (erngui@acm.org), http://triumvir.org
 Jarek Jurasz (jurasz@imb.uni-karlsruhe.de), http://www.uni-karlsruhe.de/~gm07 wrote 
 DibSect and some other pieces (see C<Changes> for details).
 
-Dennis K. Paulsen (ctrondlpaulsden@yahoo.com) wrote various pieces (See C<Changes> for
+Dennis K. Paulsen (ctrondlp@cpan.org) wrote various pieces (See C<Changes> for
 details).
 
 =head1 CREDITS
