@@ -37,7 +37,7 @@ DESCRIPTION
     because I plan to include more GUI testing functions).
 
 VERSION
-        0.04
+        0.05
 
 CHANGES
     0.01 Wed Aug 12 21:58:13 1998
@@ -90,6 +90,14 @@ CHANGES
         - As requests for changes keep comming in, I've decided to put it all
           under version control (cvs if you're curious about it).   
 
+    0.05 Sat Mar 11 23:11:42 2000
+
+        - Added support for sending function keys (e.g. "%{F4}"). A new test 
+          script is added to the distribution (eg\notepad.pl) to test
+          this functionality.
+
+        - Code cleanup to make adding new keywords easier.
+
 FUNCTIONS
     $debug  When set enables the verbose mode.
 
@@ -135,6 +143,9 @@ FUNCTIONS
                     {TAB}             Tab
                     {UP}              Up arrow
                     {PAUSE}           Pause
+                {F1}              Function Key 1
+                ...               ...
+                {F24}             Function Key 24
 
             All these named actions take an optional integer
             argument, like in {RIGHT 5}. For all of them, except

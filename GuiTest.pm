@@ -42,7 +42,7 @@ include more GUI testing functions).
 
 =head1 VERSION
 
-    0.04
+    0.05
 
 =head1 CHANGES
 
@@ -97,6 +97,15 @@ include more GUI testing functions).
     - As requests for changes keep comming in, I've decided to put it all
       under version control (cvs if you're curious about it).	
 
+0.05 Sat Mar 11 23:11:42 2000
+
+    - Added support for sending function keys (e.g. "%{F4}"). A new test 
+      script is added to the distribution (eg\notepad.pl) to test
+      this functionality.
+
+    - Code cleanup to make adding new keywords easier.
+
+
 =cut
 
 package Win32::GuiTest;
@@ -121,7 +130,7 @@ GetDesktopWindow GetWindow GetWindowText GetClassName GetParent
 		GetWindowID GetWindowLong $debug);
 
 
-$VERSION = '0.4';
+$VERSION = '0.5';
 
 $debug = 0;
 
@@ -184,6 +193,9 @@ The curly braces are used to quote special characters (SendKeys("{+}{{}") sends 
 	{TAB}             Tab
 	{UP}              Up arrow
 	{PAUSE}           Pause
+    {F1}              Function Key 1
+    ...               ...
+    {F24}             Function Key 24
 
 All these named actions take an optional integer argument, like in {RIGHT 5}. 
 For all of them, except PAUSE, the argument means a repeat count. For PAUSE it means the number of milliseconds SendKeys should pause before proceding.

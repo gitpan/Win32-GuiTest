@@ -51,17 +51,76 @@ int cvtkey(
 #endif
 
 
-/* symbol table record */
-typedef struct tokentable {
-   char *token;
-   int vkey;
-} tokentable;
+/*  Find the virtual keycode (Windows VK_* constants) given a 
+ *  symbolic name.
+ *  Returns 0 if not found.
+ */
+int findvkey(const char* name, int* key) 
+{
+    /* symbol table record */
+    typedef struct tokentable {
+        char *token;
+        int vkey;
+    } tokentable;
 
-
-/* global symbol table */
-tokentable tbl[22];
-int tbllen;
-
+    /* global symbol table */
+    static tokentable tbl[]  = {
+        "BAC", VK_BACK,
+        "BS" , VK_BACK,
+        "BKS", VK_BACK,
+        "BRE", VK_CANCEL,
+        "CAP", VK_CAPITAL,
+        "DEL", VK_DELETE,
+        "DOW", VK_DOWN,
+        "END", VK_END,
+        "ENT", VK_RETURN,
+        "ESC", VK_ESCAPE,
+        "HEL", VK_HELP,
+        "HOM", VK_HOME,
+        "INS", VK_INSERT,
+        "LEF", VK_LEFT,
+        "NUM", VK_NUMLOCK,
+        "PGD", VK_NEXT,
+        "PGU", VK_PRIOR,
+        "PRT", VK_SNAPSHOT,
+        "RIG", VK_RIGHT,
+        "SCR", VK_SCROLL,
+        "TAB", VK_TAB,
+        "UP",  VK_UP,
+        "F1",  VK_F1,
+        "F2",  VK_F2,
+        "F3",  VK_F3,
+        "F4",  VK_F4,
+        "F5",  VK_F5,
+        "F6",  VK_F6,
+        "F7",  VK_F7,
+        "F8",  VK_F8,
+        "F9",  VK_F9,
+        "F10",  VK_F10,
+        "F11",  VK_F11,
+        "F12",  VK_F12,
+        "F13",  VK_F13,
+        "F14",  VK_F14,
+        "F15",  VK_F15,
+        "F16",  VK_F16,
+        "F17",  VK_F17,
+        "F18",  VK_F18,
+        "F19",  VK_F19,
+        "F20",  VK_F20,
+        "F21",  VK_F21,
+        "F22",  VK_F22,
+        "F23",  VK_F23,
+        "F24",  VK_F24,
+    };
+    int i;
+    for (i=0;i<sizeof(tbl)/sizeof(tokentable);i++) {
+	    if (strcmp(tbl[i].token, name)==0) {
+				*key=tbl[i].vkey;
+                return 1;
+		}
+    }
+    return 0;
+}
 
 /* Get a number from the input string */
 int GetNum(
@@ -170,13 +229,7 @@ void procbrace(
 		
 		/* find entry in table */
 		*key=0;
-		for (j=0;j<tbllen;j++) {
-			if (strcmp(tbl[j].token,tmp)==0) {
-				*key=tbl[j].vkey;
-				break;
-			}
-		}
-
+        findvkey(tmp, key);
 		/* if key=0 here then something is bad */
 	} /* end of token processing */
 
@@ -254,54 +307,6 @@ int cvtkey(
 }
 
 
-static void init() {
-  tbl[0].token="BAC";
-  tbl[0].vkey=VK_BACK;
-  tbl[1].token="BS";
-  tbl[1].vkey=VK_BACK;
-  tbl[2].token="BKS";
-  tbl[2].vkey=VK_BACK;
-  tbl[3].token="BRE";
-  tbl[3].vkey=VK_CANCEL;
-  tbl[4].token="CAP";
-  tbl[4].vkey=VK_CAPITAL;
-  tbl[5].token="DEL";
-  tbl[5].vkey=VK_DELETE;
-  tbl[6].token="DOW";
-  tbl[6].vkey=VK_DOWN;
-  tbl[7].token="END";
-  tbl[7].vkey=VK_END;
-  tbl[8].token="ENT";
-  tbl[8].vkey=VK_RETURN;
-  tbl[9].token="ESC";
-  tbl[9].vkey=VK_ESCAPE;
-  tbl[10].token="HEL";
-  tbl[10].vkey=VK_HELP;
-  tbl[11].token="HOM";
-  tbl[11].vkey=VK_HOME;
-  tbl[12].token="INS";
-  tbl[12].vkey=VK_INSERT;
-  tbl[13].token="LEF";
-  tbl[13].vkey=VK_LEFT;
-  tbl[14].token="NUM";
-  tbl[14].vkey=VK_NUMLOCK;
-  tbl[15].token="PGD";
-  tbl[15].vkey=VK_NEXT;
-  tbl[16].token="PGU";
-  tbl[16].vkey=VK_PRIOR;
-  tbl[17].token="PRT";
-  tbl[17].vkey=VK_SNAPSHOT;
-  tbl[18].token="RIG";
-  tbl[18].vkey=VK_RIGHT;
-  tbl[19].token="SCR";
-  tbl[19].vkey=VK_SCROLL;
-  tbl[20].token="TAB";
-  tbl[20].vkey=VK_TAB;
-  tbl[21].token="UP";
-  tbl[21].vkey=VK_UP;
-  tbllen=22;
-}
-
 typedef struct windowtable {
   int size;
   HWND* windows/*[1024]*/;
@@ -351,12 +356,8 @@ SendKeys(s)
 	int letshift=FALSE;
 	int shift=FALSE;
 	
-	static int inited = FALSE;
-	
-     CODE:
-     	if (!inited)
-		init();
-	
+	CODE:
+     	
 	/* for each character in string */
 	for (i = 0; i < (int)strlen(s); i++) {
 		

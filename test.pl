@@ -34,5 +34,5 @@ print "ok 3\n";
 my $info = Win32::GuiTest::GetDesktopWindow();
 
 print "::" ,$info , "\n";
-print "ok 4\n" 
+print "ok 4\n";
 
