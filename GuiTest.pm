@@ -16,6 +16,13 @@ Win32::GuiTest - Perl GUI Test Utilities
       SendKeys("%fn~a{TAB}b{TAB}{BS}{DOWN}");
   }
 
+=head1 INSTALLATION
+
+    perl makefile.pl
+    nmake
+    nmake test
+    nmake install
+
 =head1 DESCRIPTION
 
 Most GUI test scripts I have seen/written for Win32 use some variant of Visual
@@ -32,6 +39,63 @@ packaged it using h2xs...
 
 The tentative name for this module is Win32::GuiTest (mostly because I plan to
 include more GUI testing functions).
+
+=head1 VERSION
+
+    0.04
+
+=head1 CHANGES
+
+
+0.01  Wed Aug 12 21:58:13 1998
+
+    - original version; created by h2xs 1.18
+
+0.02  Sun Oct 25 20:18:17 1998
+
+    - Added several Win32 API functions (typemap courtesy 
+      of Win32::APIRegistry):
+	SetForegroundWindow
+	GetDesktopWindow 
+	GetWindow 
+	GetWindowText 
+	GetClassName 
+	GetParent
+	GetWindowLong
+	SetFocus
+
+    - Ported FindWindowLike (MS-KB, Article ID: Q147659) from VB to
+      Perl. Instead of using "like", I used Perl regexps. Why
+      didn't Jeffrey Friedl include VB in "Mastering Regular
+      Expressions"? ;-). 
+	
+0.03  Sun Oct 31 18:31:52 1999
+
+    - Perhaps first version released thru CPAN (user: erngui).
+
+    - Changed name from Win32::Test to Win32::GuiTest
+
+    - Fixed bug: using strdup resulted in using system malloc and 
+      perl's free, resulting in a runtime error.  
+      This way we always use perl's malloc. Got the idea from
+      'ext\Dynaloader\dl_aix.xs:calloc'.
+
+0.04  Fri Jan 7 17:44:00 2000
+
+    - Fixed Compatibility with ActivePerl 522. Thanks to
+      Johannes Maehner <johanm@camline.com> for the initial patch.
+      There were two main issues: 
+        /1/ ActivePerl (without CAPI=TRUE) compiles extensions in C++ mode 
+            (some casts from void*, etc.. were needed).
+        /2/ The old typemap + buffers.h I was using had been rendered
+            incompatible by changes in ActivePerl. As the incompatible typemaps
+            were redundant, I deleted them. 
+      Now it works on ActivePerl (both using 'perl makefile.pl' 
+      and 'perl makefile.pl CAPI=TRUE') and on CPAN perl 
+      (http://www.perl.com/CPAN/src/stable.zip). 
+
+    - As requests for changes keep comming in, I've decided to put it all
+      under version control (cvs if you're curious about it).	
 
 =cut
 
@@ -57,7 +121,7 @@ GetDesktopWindow GetWindow GetWindowText GetClassName GetParent
 		GetWindowID GetWindowLong $debug);
 
 
-$VERSION = '0.3';
+$VERSION = '0.4';
 
 $debug = 0;
 
@@ -71,9 +135,11 @@ sub GW_CHILD    { 5;    }
 
 =over 8
 
+
 =item $debug
 
 When set enables the verbose mode.
+
 
 =item SendKeys KEYS 
 
@@ -124,9 +190,6 @@ For all of them, except PAUSE, the argument means a repeat count. For PAUSE it m
 
 In this implementation, SendKeys always returns after sending the keystrokes. There is no way to tell if an application has processed those keys when the function returns. 
 
-=back 
-
-=cut 
 
 =item FindWindowLike WINDOW, TITLEPATTERN, CLASSPATTERN, CHILDID 
 
@@ -248,15 +311,13 @@ The SendKeys function is based on the Delphi sourcecode
 published by Al Williams (http://www.al-williams.com/awc/) 
 in Dr.Dobbs (http://www.ddj.com/ddj/1997/careers1/wil2.htm).
 
-Copyright (c) 1998-1999 Ernesto Guisado. All rights reserved. This program 
+Copyright (c) 1998-2000 Ernesto Guisado. All rights reserved. This program 
 is free software; You may distribute it and/or modify it under the 
 same terms as Perl itself.
 
 =head1 AUTHOR
 
-Ernesto Guisado
-
-E<lt>erngui@acm.orgE<gt>
+Ernesto Guisado E<lt>erngui@acm.orgE<gt>
 
 =cut
 

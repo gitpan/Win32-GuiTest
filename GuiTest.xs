@@ -72,7 +72,7 @@ int GetNum(
 {
 	int res;
 	int pos = 0;  
-    char* tmp = safemalloc(strlen(s)+1);
+    char* tmp = (char*)safemalloc(strlen(s)+1);
     strcpy(tmp, s);
     OutputDebugString(tmp);
     OutputDebugString("GetNum2\n");
@@ -107,7 +107,7 @@ void procbrace(
 	int *shiftlock)
 {
     int j,k,m;
-	char* tmp=safemalloc(strlen(s)+1);
+	char* tmp = (char*)safemalloc(strlen(s)+1);
     strcpy(tmp, s);
 
     *count=1;
@@ -317,9 +317,9 @@ BOOL CALLBACK AddWindowChild(
   windowtable* children = (windowtable*)lParam;
   /* Need to grow the table to make space for the next entry */
   if (children->windows)
-      grow = saferealloc(children->windows, (children->size+1)*sizeof(HWND));
+      grow = (HWND*)saferealloc(children->windows, (children->size+1)*sizeof(HWND));
   else
-      grow = safemalloc((children->size+1)*sizeof(HWND));
+      grow = (HWND*)safemalloc((children->size+1)*sizeof(HWND));
   if (grow == 0)
     return FALSE;
   children->windows = grow;
@@ -327,9 +327,6 @@ BOOL CALLBACK AddWindowChild(
   children->windows[children->size-1] = hwnd;
   return TRUE;
 }
-
-#include "buffers.h" /* Courtesy of APIRegistry */
-
 
 MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest		
 
@@ -492,7 +489,7 @@ GetChildWindows(hWnd)
     PPCODE:
 	    children.size    = 0;
         children.windows = 0;
-        EnumChildWindows(hWnd, AddWindowChild, (LPARAM)&children);
+        EnumChildWindows(hWnd, (WNDENUMPROC)AddWindowChild, (LPARAM)&children);
         for (i = 0; i < children.size; i++) {
 	        XPUSHs(sv_2mortal(newSViv((IV)children.windows[i])));
         }
