@@ -55,7 +55,7 @@ include more GUI testing functions).
 
 =head1 VERSION
 
-    0.08
+    0.09
 
 =head1 CHANGES
 
@@ -145,6 +145,11 @@ include more GUI testing functions).
       'eg\notepad_text.pl' for more details. 
       Thanks to Mauro <m_servizi@yahoo.it> from Italy for the idea. 
 
+0.09 Thu Jan 4 22:30:50 2001
+
+    - Added {SPC} action to sendkeys to simulate hitting the spacebar.
+      Thanks to Sohrab Niramwalla <sohrab.niramwalla@utoronto.ca> for the 
+      idea. 
     
 =cut
 
@@ -174,7 +179,7 @@ GetDesktopWindow GetWindow GetWindowText GetClassName GetParent
         SendMouseMoveAbs MouseMoveAbsPix SendMouseMoveRel WMGetKey);
 
 
-$VERSION = '0.8';
+$VERSION = '0.9';
 
 $debug = 0;
 
@@ -240,6 +245,9 @@ The curly braces are used to quote special characters (SendKeys("{+}{{}") sends 
     {F1}              Function Key 1
     ...               ...
     {F24}             Function Key 24
+    {SPC}             Spacebar
+    {SPACE}           Spacebar
+    {SPACEBAR}        Spacebar
 
 All these named actions take an optional integer argument, like in {RIGHT 5}. 
 For all of them, except PAUSE, the argument means a repeat count. For PAUSE it means the number of milliseconds SendKeys should pause before proceding.

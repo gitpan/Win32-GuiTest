@@ -111,6 +111,8 @@ int findvkey(const char* name, int* key)
         "F22",  VK_F22,
         "F23",  VK_F23,
         "F24",  VK_F24,
+		"SPC",  VK_SPACE,
+		"SPA",  VK_SPACE,
     };
     int i;
     for (i=0;i<sizeof(tbl)/sizeof(tokentable);i++) {

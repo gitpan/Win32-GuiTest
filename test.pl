@@ -6,7 +6,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..7\n"; }
+BEGIN { $| = 1; print "1..10\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Win32::GuiTest;
 $loaded = 1;
@@ -53,3 +53,14 @@ print "not " unless  $content =~ /Win32::GuiTest/;
 print "ok 7\n";
 print "not " unless  $file_content =~ /Win32::GuiTest/;
 print "ok 8\n";
+system("start notepad.exe");
+sleep 1;
+@windows = Win32::GuiTest::FindWindowLike(0, "", "Notepad");
+print "not " unless scalar @windows == 1;
+print "ok 9\n";
+
+#Win32::GuiTest::SendKeys("%aa{TAB 3}{SPC}%{F4}");
+Win32::GuiTest::SendKeys("%fo{TAB 3}{SPC}%{F4}");
+@windows = Win32::GuiTest::FindWindowLike(0, "", "Notepad");
+print "not " unless scalar @windows == 0;
+print "ok 10\n";
