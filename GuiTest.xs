@@ -1,11 +1,11 @@
 /* 
- *	GuiTest.xs
+ *  $Id: GuiTest.xs,v 1.5 2001/06/02 11:10:38 erngui Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
- *	published by Al Williams <http://www.al-williams.com/awc/> 
- *	in Dr.Dobbs <http://www.ddj.com/ddj/1997/careers1/wil2.htm>
+ *  published by Al Williams <http://www.al-williams.com/awc/> 
+ *  in Dr.Dobbs <http://www.ddj.com/ddj/1997/careers1/wil2.htm>
  *	
- *	Copyright (c) 1998-2000 by Ernesto Guisado <erngui@acm.org>
+ *  Copyright (c) 1998-2001 by Ernesto Guisado <erngui@acm.org>
  *
  *  You may distribute under the terms of either the GNU General Public
  *  License or the Artistic License.
@@ -111,15 +111,15 @@ int findvkey(const char* name, int* key)
         "F22",  VK_F22,
         "F23",  VK_F23,
         "F24",  VK_F24,
-		"SPC",  VK_SPACE,
-		"SPA",  VK_SPACE,
+	"SPC",  VK_SPACE,
+	"SPA",  VK_SPACE,
     };
     int i;
     for (i=0;i<sizeof(tbl)/sizeof(tokentable);i++) {
-	    if (strcmp(tbl[i].token, name)==0) {
-				*key=tbl[i].vkey;
-                return 1;
-		}
+        if (strcmp(tbl[i].token, name)==0) {
+            *key=tbl[i].vkey;
+            return 1;
+	}
     }
     return 0;
 }
@@ -131,23 +131,23 @@ int GetNum(
 	int* len
 	)
 {
-	int res;
-	int pos = 0;  
+    int res;
+    int pos = 0;  
     char* tmp = (char*)safemalloc(strlen(s)+1);
     strcpy(tmp, s);
     OutputDebugString(tmp);
     OutputDebugString("GetNum2\n");
-	while (s[i]>='0' && s[i]<='9') {
-		tmp[pos++] = s[i++];
-		(*len)++;
-	}
+    while (s[i]>='0' && s[i]<='9') {
+	tmp[pos++] = s[i++];
+	(*len)++;
+    }
     OutputDebugString("GetNum3\n");
-	tmp[pos] = '\0';
-	res = atoi(tmp);
+    tmp[pos] = '\0';
+    res = atoi(tmp);
     OutputDebugString("GetNum4\n");
-	free(tmp);
+    free(tmp);
     OutputDebugString("GetNum5\n");
-	return res;
+    return res;
 }
 
 
@@ -237,98 +237,97 @@ void procbrace(
 /* Wrapper around kebyd_event */
 void keybd(int vk, int down)
 {
-	int scan;
-	int flg;
+    int scan;
+    int flg;
 
-	scan=MapVirtualKey(vk,0);  /* find VK */
-	if (down)
-		flg=0;
-	else
-		flg=KEYEVENTF_KEYUP;
-	keybd_event(vk,scan,flg,0);
+    scan=MapVirtualKey(vk,0);  /* find VK */
+    if (down)
+        flg=0;
+    else
+        flg=KEYEVENTF_KEYUP;
+    keybd_event(vk,scan,flg,0);
 }
 
 int cvtkey(
-	const char* s,
-	int i, 
-	int *key,
+    const char* s,
+    int i, 
+    int *key,
     int *count, 
-	int* len,
+    int* len,
     int* letshift,
     int* shift, 
-	int* letctrl,
+    int* letctrl,
     int* ctrl, 
-	int* letalt,
+    int* letalt,
     int* alt, 
-	int* shiftlock
-	)
+    int* shiftlock)
 {
-	int rv;
-	char c;
-	int Result=FALSE;
+    int rv;
+    char c;
+    int Result=FALSE;
 	
-	/* if i==-1 then supress special processing */
-	if (i!=-1) { 
-	  *len=1;
-	  *count=1;
-	}
-	if (i!=-1)
-		c=s[i];
-	else 
-		c=0;
+    /* if i==-1 then supress special processing */
+    if (i!=-1) { 
+        *len=1;
+        *count=1;
+    }
+    if (i!=-1)
+        c=s[i];
+    else 
+        c=0;
 
-	/* scan for special character */
+    /* scan for special character */
     switch (c) {
     case '{': 
-		procbrace(s,i,key,len,count,letshift,
-			letctrl,letalt,shift,ctrl,alt,shiftlock);
+        procbrace(s,i,key,len,count,letshift,
+                  letctrl,letalt,shift,ctrl,alt,shiftlock);
         if (*key==0)
-			return TRUE;
-		break;
-	case '~': *key=VK_RETURN; break;
+            return TRUE;
+        break;
+    case '~': *key=VK_RETURN; break;
     case '+': *shift=TRUE; Result=TRUE; break;
     case '^': *ctrl=TRUE; Result=TRUE; break;
     case '%': *alt=TRUE; Result=TRUE; break;
     case '(': *shiftlock=TRUE; Result=TRUE; break;
     case ')': *shiftlock=FALSE; Result=TRUE; break;
-	default:
-       if (c==0)
-		   c=(char)*key;
-       rv=VkKeyScan(c);  /* normal character */
-       *key=rv & 0xFF;
-       *letshift=((rv & 0x100)==0x100);
-       *letctrl =((rv & 0x200)==0x200);
-       *letalt  =((rv & 0x400)==0x400);
-	};
+    default:
+        if (c==0)
+            c=(char)*key;
+        rv=VkKeyScan(c);  /* normal character */
+        *key=rv & 0xFF;
+        *letshift=((rv & 0x100)==0x100);
+        *letctrl =((rv & 0x200)==0x200);
+        *letalt  =((rv & 0x400)==0x400);
+    };
 
-	return Result;
+    return Result;
 }
 
 
 typedef struct windowtable {
-  int size;
-  HWND* windows/*[1024]*/;
+    int size;
+    HWND* windows/*[1024]*/;
 } windowtable; 
 
 
 BOOL CALLBACK AddWindowChild(
-  HWND hwnd,    // handle to child window
-  LPARAM lParam // application-defined value
-)
+    HWND hwnd,    // handle to child window
+    LPARAM lParam // application-defined value
+    )
 {
-  HWND* grow;
-  windowtable* children = (windowtable*)lParam;
-  /* Need to grow the table to make space for the next entry */
-  if (children->windows)
-      grow = (HWND*)saferealloc(children->windows, (children->size+1)*sizeof(HWND));
-  else
-      grow = (HWND*)safemalloc((children->size+1)*sizeof(HWND));
-  if (grow == 0)
-    return FALSE;
-  children->windows = grow;
-  children->size++;
-  children->windows[children->size-1] = hwnd;
-  return TRUE;
+    HWND* grow;
+    windowtable* children = (windowtable*)lParam;
+    /* Need to grow the table to make space for the next entry */
+    if (children->windows)
+        grow = (HWND*)saferealloc(children->windows, (children->size+1)*sizeof(HWND));
+    else
+        grow = (HWND*)safemalloc((children->size+1)*sizeof(HWND));
+    if (grow == 0)
+        return FALSE;
+    children->windows = grow;
+    children->size++;
+    children->windows[children->size-1] = hwnd;
+    return TRUE;
 }
 
 /* 
@@ -373,8 +372,8 @@ PROTOTYPES: DISABLE
 
 void
 SendLButtonUp()
-	CODE:
-        simple_mouse(MOUSEEVENTF_LEFTUP, 0, 0);
+    CODE:
+    simple_mouse(MOUSEEVENTF_LEFTUP, 0, 0);
 
 void
 SendLButtonDown()
@@ -445,59 +444,56 @@ SendKeys(s)
 	int letshift=FALSE;
 	int shift=FALSE;
 	
-	CODE:
+    CODE:
      	
 	/* for each character in string */
 	for (i = 0; i < (int)strlen(s); i++) {
+            if (len!=1) {  /* skip characters on request */
+		len--;
+		continue;
+	    }
+	    c=s[i];
 		
-		if (len!=1) {  /* skip characters on request */
-			len--;
-			continue;
-		}
-		c=s[i];
+	    /* convert key */
+	    if (cvtkey(s,i,&key,&count,&len,&letshift,&shift,
+                       &letctrl,&ctrl,&letalt,&alt,&shiftlock))
+                continue;
 		
-		/* convert key */
-		if (cvtkey(s,i,&key,&count,&len,&letshift,&shift,
-			  &letctrl,&ctrl,&letalt,&alt,&shiftlock))
-		  continue;
+            /* fake modifier keys */
+	    if (shift || letshift) 
+		keybd(VK_SHIFT,TRUE);
+	    if (ctrl || letctrl)
+		keybd(VK_CONTROL,TRUE);
+	    if (alt || letalt)
+		keybd(VK_MENU,TRUE);
 		
-		/* fake modifier keys */
-		if (shift || letshift) 
-			keybd(VK_SHIFT,TRUE);
-		if (ctrl || letctrl)
-			keybd(VK_CONTROL,TRUE);
-		if (alt || letalt)
-			keybd(VK_MENU,TRUE);
-		
-		/* do requested number of keystrokes */
-		for (j=0; j<count; j++) {
-		  keybd(key,TRUE);
-		  keybd(key,FALSE);
-		  Sleep(50); /* wait 50ms*/
-		}
+            /* do requested number of keystrokes */
+	    for (j=0; j<count; j++) {
+                keybd(key,TRUE);
+		keybd(key,FALSE);
+		Sleep(50); /* wait 50ms*/
+            }
 
-		/* clear modifiers unless locked */
-		if (alt || letalt && !shiftlock)
-		   keybd(VK_MENU,FALSE);
-		if (ctrl || letctrl && !shiftlock)
-		   keybd(VK_CONTROL,FALSE);
-		if (shift || letshift && !shiftlock)
-		   keybd(VK_SHIFT,FALSE);
-		if (!shiftlock) {
-		  alt=FALSE;
-		  ctrl=FALSE;
-		  shift=FALSE;
-		}
+            /* clear modifiers unless locked */
+	    if (alt || letalt && !shiftlock)
+                keybd(VK_MENU,FALSE);
+	    if (ctrl || letctrl && !shiftlock)
+		keybd(VK_CONTROL,FALSE);
+	    if (shift || letshift && !shiftlock)
+		keybd(VK_SHIFT,FALSE);
+	    if (!shiftlock) {
+		alt=FALSE;
+		ctrl=FALSE;
+		shift=FALSE;
+	    }
 	}
-
-
 
 HWND
 GetDesktopWindow()
     CODE:
         RETVAL = GetDesktopWindow();
     OUTPUT:
-	    RETVAL
+        RETVAL
 
 
 HWND
@@ -507,7 +503,7 @@ GetWindow(hwnd, uCmd)
     CODE:
         RETVAL = GetWindow(hwnd, uCmd);
     OUTPUT:
-	    RETVAL
+	RETVAL
 
 
 SV*
@@ -572,18 +568,18 @@ void
 GetChildWindows(hWnd)
     HWND hWnd;
     PREINIT:
-	    BOOL enum_ok;          
+        BOOL enum_ok;          
         windowtable children;
         int i;
         char buf[512];
     PPCODE:
-	    children.size    = 0;
+        children.size    = 0;
         children.windows = 0;
         EnumChildWindows(hWnd, (WNDENUMPROC)AddWindowChild, (LPARAM)&children);
         for (i = 0; i < children.size; i++) {
-	        XPUSHs(sv_2mortal(newSViv((IV)children.windows[i])));
+            XPUSHs(sv_2mortal(newSViv((IV)children.windows[i])));
         }
-		safefree(children.windows);
+	safefree(children.windows);
         
 
 SV*
@@ -601,5 +597,31 @@ WMGetText(hwnd)
         } else {
             RETVAL = 0;
         }
+    OUTPUT:
+        RETVAL
+
+BOOL
+IsChild(hWndParent, hWnd)
+    HWND hWndParent
+    HWND hWnd
+    CODE:
+        RETVAL = IsChild(hWndParent, hWnd);
+    OUTPUT:
+        RETVAL
+
+DWORD
+GetChildDepth(hAncestor, hChild)
+    HWND hAncestor
+    HWND hChild
+    PREINIT:
+        DWORD depth = 1;
+    CODE:
+        while ((hChild = GetParent(hChild)) != 0) {
+            depth++;
+            if (hChild == hAncestor) {
+                break;
+            }
+        }
+        RETVAL = depth;
     OUTPUT:
         RETVAL

@@ -1,3 +1,6 @@
+#
+# $Id: GuiTest.pm,v 1.6 2001/06/02 21:46:20 erngui Exp $
+#
 =head1 NAME
 
 Win32::GuiTest - Perl GUI Test Utilities
@@ -23,7 +26,12 @@ Win32::GuiTest - Perl GUI Test Utilities
     nmake test
     nmake install
 
-If you're using ActivePerl 5.6 (http://www.activestate.com/Products/ActivePerl/index.html) you can install the binary package I'm including instead. You'll need to enter PPM (Perl Package Manager) from the command-line. Once you have extracted the files I send you to a directory of your machine, enter PPM and do like this:
+If you are using ActivePerl 5.6 
+(http://www.activestate.com/Products/ActivePerl/index.html) 
+you can install the binary package I am including instead. You will need 
+to enter PPM (Perl Package Manager) from the command-line. Once you have 
+extracted the files I send you to a directory of your machine, enter PPM
+ and do like this:
 
     C:\TEMP>ppm
     PPM interactive shell (2.0) - type 'help' for available commands.
@@ -33,7 +41,8 @@ If you're using ActivePerl 5.6 (http://www.activestate.com/Products/ActivePerl/i
     Writing C:\Perl\site\lib\auto\Win32\GuiTest\.packlist
     PPM>
 
-I extracted them to 'c:\temp', please use the directory where you extracted the files instead.
+I extracted them to 'c:\temp', please use the directory where you extracted 
+the files instead.
 
 
 =head1 DESCRIPTION
@@ -55,7 +64,7 @@ include more GUI testing functions).
 
 =head1 VERSION
 
-    0.09
+    1.00
 
 =head1 CHANGES
 
@@ -68,7 +77,7 @@ include more GUI testing functions).
 
     - Added several Win32 API functions (typemap courtesy 
       of Win32::APIRegistry):
-	SetForegroundWindow
+        SetForegroundWindow
 	GetDesktopWindow 
 	GetWindow 
 	GetWindowText 
@@ -150,6 +159,21 @@ include more GUI testing functions).
     - Added {SPC} action to sendkeys to simulate hitting the spacebar.
       Thanks to Sohrab Niramwalla <sohrab.niramwalla@utoronto.ca> for the 
       idea. 
+
+1.00 Sun May 13 22:02:01 2001
+
+    - Fixed a bug in FindWindowLike that caused duplicated window handles to
+      be returned.
+
+    - Simplified the logic in FindWindowLike.
+
+    - Added IsChild and GetChildDepth functions. Exported GetChildWindows.
+
+    - Added more tests (tightening the net in XP-speak)
+
+    - Added 'eg\spy--.pl' to the distribution.
+
+    
     
 =cut
 
@@ -171,15 +195,15 @@ require AutoLoader;
 );
 
 @EXPORT_OK = qw(SendKeys FindWindowLike SetForegroundWindow
-GetDesktopWindow GetWindow GetWindowText GetClassName GetParent
-		GetWindowID GetWindowLong $debug SendMouse
-        SendLButtonUp SendLButtonDown
-        SendMButtonUp SendMButtonDown
-        SendRButtonUp SendRButtonDown
-        SendMouseMoveAbs MouseMoveAbsPix SendMouseMoveRel WMGetKey);
+                GetDesktopWindow GetWindow GetWindowText GetClassName
+                GetParent GetWindowID GetWindowLong $debug SendMouse
+                SendLButtonUp SendLButtonDown
+                SendMButtonUp SendMButtonDown
+                SendRButtonUp SendRButtonDown
+                SendMouseMoveAbs MouseMoveAbsPix SendMouseMoveRel
+                WMGetText IsChild GetChildDepth GetChildWindows);
 
-
-$VERSION = '0.9';
+$VERSION = '1.0';
 
 $debug = 0;
 
@@ -217,59 +241,63 @@ E.g. SendKeys("ABC") <=> SendKeys("+(abc)")
 
 The curly braces are used to quote special characters (SendKeys("{+}{{}") sends a '+' and a '{'). You can also use them to specify certain named actions:
 
-	Name              Action
+	Name          Action
 
-	{BACKSPACE}       Backspace
-	{BS}              Backspace
-	{BKSP}            Backspace
-	{BREAK}           Break
-	{CAPS}            Caps Lock
-	{DELETE}          Delete
-	{DOWN}            Down arrow
-	{END}             End
-	{ENTER}           Enter (same as ~)
-	{ESCAPE}          Escape
-	{HELP}            Help key
-	{HOME}            Home
-	{INSERT}          Insert
-	{LEFT}            Left arrow
-	{NUMLOCK}         Num lock
-	{PGDN}            Page down
-	{PGUP}            Page up
-	{PRTSCR}          Print screen
-	{RIGHT}           Right arrow
-	{SCROLL}          Scroll lock
-	{TAB}             Tab
-	{UP}              Up arrow
-	{PAUSE}           Pause
-    {F1}              Function Key 1
-    ...               ...
-    {F24}             Function Key 24
-    {SPC}             Spacebar
-    {SPACE}           Spacebar
-    {SPACEBAR}        Spacebar
+	{BACKSPACE}   Backspace
+	{BS}          Backspace
+	{BKSP}        Backspace
+	{BREAK}       Break
+	{CAPS}        Caps Lock
+	{DELETE}      Delete
+	{DOWN}        Down arrow
+	{END}         End
+	{ENTER}       Enter (same as ~)
+	{ESCAPE}      Escape
+	{HELP}        Help key
+	{HOME}        Home
+	{INSERT}      Insert
+	{LEFT}        Left arrow
+	{NUMLOCK}     Num lock
+	{PGDN}        Page down
+	{PGUP}        Page up
+	{PRTSCR}      Print screen
+	{RIGHT}       Right arrow
+	{SCROLL}      Scroll lock
+	{TAB}         Tab
+	{UP}          Up arrow
+	{PAUSE}       Pause
+        {F1}          Function Key 1
+        ...           ...
+        {F24}         Function Key 24
+        {SPC}         Spacebar
+        {SPACE}       Spacebar
+        {SPACEBAR}    Spacebar
 
 All these named actions take an optional integer argument, like in {RIGHT 5}. 
-For all of them, except PAUSE, the argument means a repeat count. For PAUSE it means the number of milliseconds SendKeys should pause before proceding.
+For all of them, except PAUSE, the argument means a repeat count. For PAUSE
+it means the number of milliseconds SendKeys should pause before proceding.
 
-In this implementation, SendKeys always returns after sending the keystrokes. There is no way to tell if an application has processed those keys when the function returns. 
+In this implementation, SendKeys always returns after sending the keystrokes.
+There is no way to tell if an application has processed those keys when the
+function returns. 
 
 
 =item SendMouse COMMAND
 
 This function emulates mouse input.  The COMMAND parameter is a string
 containing one or more of the following substrings:
-	{LEFTDOWN}        left button down
-	{LEFTUP}          left button up
-	{MIDDLEDOWN}      middle button down
-	{MIDDLEUP}        middle button up
-	{RIGHTDOWN}       right button down
-	{RIGHTUP}         right button up
-	{LEFTCLICK}       left button single click
-	{MIDDLECLICK}     middle button single click
-	{RIGHTCLICK}      right button single click
-	{ABSx,y}          move to absolute coordinate ( x, y )
-	{RELx,y}     	  move to relative coordinate ( x, y )
+
+        {LEFTDOWN}    left button down
+        {LEFTUP}      left button up
+        {MIDDLEDOWN}  middle button down
+	{MIDDLEUP}    middle button up
+	{RIGHTDOWN}   right button down
+	{RIGHTUP}     right button up
+	{LEFTCLICK}   left button single click
+	{MIDDLECLICK} middle button single click
+	{RIGHTCLICK}  right button single click
+	{ABSx,y}      move to absolute coordinate ( x, y )
+        {RELx,y}      move to relative coordinate ( x, y )
 
 Note: Absolute mouse coordinates range from 0 to 65535.
       Relative coordinates can be positive or negative.
@@ -278,14 +306,13 @@ Note: Absolute mouse coordinates range from 0 to 65535.
 Also equivalent low-level functions are available:
 
     SendLButtonUp()
-	SendLButtonDown()
-	SendMButtonUp()
-	SendMButtonDown()
-	SendRButtonUp()
-	SendRButtonDown()
-	SendMouseMoveRel(x,y)
+        SendLButtonDown()
+        SendMButtonUp()
+        SendMButtonDown()
+        SendRButtonUp()
+        SendRButtonDown()
+        SendMouseMoveRel(x,y)
     SendMouseMoveAbs(x,y)
-
 
 	
 =back
@@ -293,36 +320,35 @@ Also equivalent low-level functions are available:
 =cut
 
 sub SendMouse {
-	my $command = shift;
+    my $command = shift;
 
-	# Split out each command block enclosed in curly braces.
-	my @list = ( $command =~ /{(.+?)}/g );
-	my $item;
+    # Split out each command block enclosed in curly braces.
+    my @list = ( $command =~ /{(.+?)}/g );
+    my $item;
 
-	foreach $item ( @list )
-	{
-		if    ( $item =~ /leftdown/i )		{ SendLButtonDown (); }
-		elsif ( $item =~ /leftup/i )		{ SendLButtonUp   (); }
-		elsif ( $item =~ /middledown/i )	{ SendMButtonDown (); }
-		elsif ( $item =~ /middleup/i )		{ SendMButtonUp   (); }
-		elsif ( $item =~ /rightdown/i )		{ SendRButtonDown (); }
-		elsif ( $item =~ /rightup/i )		{ SendRButtonUp   (); }
-		elsif ( $item =~ /leftclick/i )	{
-			SendLButtonDown ();
-			SendLButtonUp ();
-		}
-		elsif ( $item =~ /middleclick/i ) {
-			SendMButtonDown ();
-			SendMButtonUp ();
-		}
-		elsif ( $item =~ /rightclick/i ) {
-			SendRButtonDown ();
-			SendRButtonUp ();
-		}
-		elsif ( $item =~ /abs(-?\d+),(-?\d+)/i ) { SendMouseMoveAbs($1,$2); }
-		elsif ( $item =~ /rel(-?\d+),(-?\d+)/i ) { SendMouseMoveRel($1,$2); }
-		else  { warn "GuiTest: Unmatched mouse command! \n"; }
-	}
+    foreach $item ( @list ) {
+        if ( $item =~ /leftdown/i )      { SendLButtonDown (); }
+        elsif ( $item =~ /leftup/i )	 { SendLButtonUp   (); }
+        elsif ( $item =~ /middledown/i ) { SendMButtonDown (); }
+        elsif ( $item =~ /middleup/i )	 { SendMButtonUp   (); }
+        elsif ( $item =~ /rightdown/i )	 { SendRButtonDown (); }
+        elsif ( $item =~ /rightup/i )	 { SendRButtonUp   (); }
+        elsif ( $item =~ /leftclick/i )	{
+            SendLButtonDown ();
+            SendLButtonUp ();
+        }
+        elsif ( $item =~ /middleclick/i ) {
+            SendMButtonDown ();
+            SendMButtonUp ();
+        }
+        elsif ( $item =~ /rightclick/i ) {
+            SendRButtonDown ();
+            SendRButtonUp ();
+        }
+        elsif ( $item =~ /abs(-?\d+),(-?\d+)/i ) { SendMouseMoveAbs($1,$2); }
+        elsif ( $item =~ /rel(-?\d+),(-?\d+)/i ) { SendMouseMoveRel($1,$2); }
+        else  { warn "GuiTest: Unmatched mouse command! \n"; }
+    }
 }
 
 
@@ -361,86 +387,63 @@ sub FindWindowLike {
     my $Classname  = shift; # Regexp
     my $ID         = shift; # Op. ID
     my $maxlevel   = shift; 
-    my $level      = shift || 0; 
 
     my @found;
 
-    if ($maxlevel && $level >= $maxlevel) {
-		warn "Level $maxlevel reached\n" if $debug;
-		return @found;
-    }
- 
-    my $hwnd;
-    my @hwnds;
-    my $r;
-    
-    my $sWindowText;   
-    my $sClassname;
-    my $sID;
-	
-    $level++;
-    
-    # Get first child window:
-    #$hwnd = GetWindow($hWndStart, GW_CHILD);
-    #while ($hwnd) {
-    @hwnds = GetChildWindows($hWndStart);
-	warn "Children < @hwnds >\n" if $debug;
-    for $hwnd (@hwnds) {
-        # Search children by recursion:
-        my @children = FindWindowLike($hwnd, $WindowText, 
-				      $Classname, $ID, $maxlevel, $level);
-	    push(@found, @children);
+    #DbgShow("Children < @hwnds >\n");
+    for my $hwnd (GetChildWindows($hWndStart)) {
+        next if $maxlevel && GetChildDepth($hWndStart, $hwnd) > $maxlevel;
+            
+        # Get the window text and class name:
+        my $sWindowText = GetWindowText($hwnd);
+        my $sClassname  = GetClassName($hwnd);
 
-        # Get the window text and class name:   */
-        $sWindowText = GetWindowText($hwnd);
-        $sClassname  = GetClassName($hwnd);
+	#DbgShow("($hwnd, $sWindowText, $sClassname) has ". scalar @children . 
+        #        " children < @children >\n");
 
-		warn "($hwnd, $sWindowText, $sClassname) has ". scalar @children . 
-			" children < @children >\n"
-			if $debug;
-
-        # If window is a child get the ID:   */
+        # If window is a child get the ID:
+        my $sID;
         if (GetParent($hwnd) != 0) {
-            $r = GetWindowLong($hwnd, GWL_ID);   
-            $sID = $r;   
+            $sID = GetWindowLong($hwnd, GWL_ID);   
         }
-        # Check that window matches the search parameters:*/
+        # Check that window matches the search parameters:
         my $patwnd   = "$WindowText";
-		my $patclass = "$Classname";
+	my $patclass = "$Classname";
 	
-		warn "Using pattern ($patwnd, $patclass)\n" if $debug;
+	DbgShow("Using pattern ($patwnd, $patclass)\n")
+            if $patwnd or $patclass;
 
-		if ((!$patwnd   || $sWindowText =~ /$patwnd/) && 
-			(!$patclass || $sClassname =~ /$patclass/)) {
-			warn "Matched $1\n" if $debug;
-			if (!$ID){   
+	if ((!$patwnd   || $sWindowText =~ /$patwnd/) && 
+            (!$patclass || $sClassname =~ /$patclass/))
+        {
+            DbgShow("Matched $1\n") if $1;
+            if (!$ID) {   
                 # If find a match add handle to array:   
-                #warn "Trying to push null wnd 1\n" unless $hwnd;
-				push @found, $hwnd;
+		push @found, $hwnd;
             } elsif ($sID) {   
                 if ($sID == $ID) {
                     # If find a match add handle to array:
-					#warn "Trying to push null wnd 2\n" unless $hwnd;
                     push @found, $hwnd;
-				}   
+                }   
             }   
-            warn "Window Found: \n" . 
-		"  Window Text  : $sWindowText\n" .
-		    "  Window Class : $sClassname\n" .
-			"  Window Handle: $hwnd\n" if $debug;   
+            DbgShow("Window Found(" . 
+                "Text  : '$sWindowText'" .
+		" Class : '$sClassname'" .
+		" Handle: '$hwnd')\n");   
         }
-        # Get next child window:   
-        #$hwnd = GetWindow($hwnd, GW_HWNDNEXT);   
     }
-    # Decrement recursion counter:   
-    $level--;
-    # Return the windows found: 
-	warn "FindWin found < @found >\n" if $debug;  
+
+    #DbgShow("FindWin found < @found >\n");
     return @found;
 }
 
+sub DbgShow {
+    my $string = shift;
+    print $string if $debug;
+}
+
 sub GetWindowID {
-	return GetWindowLong(shift, GWL_ID);
+    return GetWindowLong(shift, GWL_ID);
 }
 
 
