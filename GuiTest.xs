@@ -1,5 +1,5 @@
 /* 
- *  $Id: GuiTest.xs,v 1.8 2001/06/17 19:24:42 erngui Exp $
+ *  $Id: GuiTest.xs,v 1.10 2001/11/04 20:27:37 erngui Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -374,6 +374,22 @@ BOOL AttachWin(HWND hwnd, BOOL fAttach)
 }
 
 
+SV*
+GetTextHelper(HWND hwnd, int index, UINT lenmsg, UINT textmsg)
+{
+    SV* sv = 0;
+    int len = SendMessage(hwnd, lenmsg, index, 0L);
+    char* text = (char*)safemalloc(len+1);
+    if (text != 0) {
+        SendMessage(hwnd, textmsg, index, (LPARAM)text);
+        sv = newSVpv(text, len);
+        safefree(text);        
+    }
+    return sv;
+}
+
+
+
 MODULE = Win32::GuiTest		PACKAGE = Win32::GuiTest		
 
 PROTOTYPES: DISABLE
@@ -626,7 +642,8 @@ WMSetText(hwnd, text)
   char * text
 CODE:
   RETVAL = SendMessage(hwnd, WM_SETTEXT, 0, (LPARAM) text);
-
+OUTPUT:
+  RETVAL
 
 BOOL
 IsChild(hWndParent, hWnd)
@@ -662,7 +679,9 @@ SendMessage(hwnd, msg, wParam, lParam)
   LPARAM lParam
 CODE:
   RETVAL = SendMessage(hwnd, msg, wParam, lParam);
-
+OUTPUT:
+  RETVAL
+  
 int
 PostMessage(hwnd, msg, wParam, lParam)
   HWND hwnd
@@ -671,6 +690,8 @@ PostMessage(hwnd, msg, wParam, lParam)
   LPARAM lParam
 CODE:
   RETVAL = PostMessage(hwnd, msg, wParam, lParam);
+OUTPUT:
+  RETVAL
 
 void
 CheckButton(hwnd)
@@ -881,3 +902,56 @@ GetWindowRect(hWnd)
         XPUSHs(sv_2mortal(newSViv((IV)rect.top)));
         XPUSHs(sv_2mortal(newSViv((IV)rect.right)));
         XPUSHs(sv_2mortal(newSViv((IV)rect.bottom))); 
+
+
+
+SV*
+GetComboText(hwnd, index)
+    HWND hwnd;
+    int index
+    CODE:
+        RETVAL = GetTextHelper(hwnd, index, CB_GETLBTEXTLEN, CB_GETLBTEXT);
+    OUTPUT:
+        RETVAL
+
+SV*
+GetListText(hwnd, index)
+    HWND hwnd;
+    int index
+    CODE:
+        RETVAL = GetTextHelper(hwnd, index, LB_GETTEXTLEN, LB_GETTEXT);
+    OUTPUT:
+        RETVAL
+
+void 
+GetComboContents(hWnd)
+    HWND hWnd;
+PPCODE:
+    int nelems = SendMessage(hWnd, CB_GETCOUNT, 0, 0);
+    int i;
+    for (i = 0; i < nelems; i++) {
+        XPUSHs(sv_2mortal(GetTextHelper(hWnd, i, CB_GETLBTEXTLEN, CB_GETLBTEXT)));
+    }
+
+void 
+GetListContents(hWnd)
+    HWND hWnd;
+PPCODE:
+    int nelems = SendMessage(hWnd, LB_GETCOUNT, 0, 0);
+    int i;
+    for (i = 0; i < nelems; i++) {
+        XPUSHs(sv_2mortal(GetTextHelper(hWnd, i, LB_GETTEXTLEN, LB_GETTEXT)));
+    }
+
+BOOL
+IsKeyPressed(name)
+    char* name;
+    CODE:
+    int vkey;
+    int found = findvkey(name, &vkey);
+    if (found)
+        RETVAL = GetAsyncKeyState(vkey);
+    else
+        RETVAL = 0;
+    OUTPUT:
+        RETVAL

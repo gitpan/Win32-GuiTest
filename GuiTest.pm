@@ -1,5 +1,5 @@
 #
-# $Id: GuiTest.pm,v 1.10 2001/06/17 19:31:33 erngui Exp $
+# $Id: GuiTest.pm,v 1.13 2001/11/04 20:27:37 erngui Exp $
 #
 =head1 NAME
 
@@ -62,9 +62,12 @@ packaged it using h2xs...
 The tentative name for this module is Win32::GuiTest (mostly because I plan to
 include more GUI testing functions).
 
+I've created a Yahoo Group for the module that you can join at
+   http://groups.yahoo.com/group/perlguitest/join
+   
 =head1 VERSION
 
-    1.1
+    1.2
 
 =head1 CHANGES
 
@@ -198,8 +201,24 @@ include more GUI testing functions).
 
     - SendKeys now takes an optional parameter to change the default 50 ms
       delay between keystrokes. Suggested by Wilson P. Snyder II
-      <wsnyder@world.std.com>. 
-    
+      <wsnyder@world.std.com>.
+
+1.20 Wed Jul 18 20:44:11  2001
+
+    - Added GetComboText, GetComboContents, GetListText and GetListContents
+      to allow easy extraction of data from list and combo boxes.
+
+    - Added 'eg\fonts.pl' to show the new functionality. This script opens
+      the Notepad "Font" dialog and prints to stdout the contents of the Font
+      combobox.
+
+    - Fixed bug in SendMessage (and others), where the return value was lost
+      Caused by a missing OUTPUT tag.
+
+    - Added IsKeyPressed function. Suggested by Rudi Farkas.
+      See 'eg\keypress.pl' for a demo. Works even if the script
+      is running in the background.
+                             
 =cut
 
 package Win32::GuiTest;
@@ -228,6 +247,10 @@ require AutoLoader;
                 GetClassName
                 GetCursorPos
                 GetDesktopWindow
+                GetComboText
+                GetComboContents
+                GetListText
+                GetListContents
                 GetParent
                 GetScreenRes
                 GetWindow
@@ -270,6 +293,7 @@ require AutoLoader;
                 SetActiveWindow
                 ShowWindow
                 WMSetText
+                IsKeyPressed
                 );
 
 %EXPORT_TAGS = (
@@ -282,7 +306,7 @@ require AutoLoader;
 Exporter::export_ok_tags('SW');
 
                              
-$VERSION = '1.1';
+$VERSION = '1.2';
 
 $debug = 0;
 
@@ -587,7 +611,7 @@ same terms as Perl itself.
 
 =head1 AUTHOR
 
-Ernesto Guisado E<lt>erngui@acm.orgE<gt>, E<lt>http://www.geocities.com/ernguiE<gt>
+Ernesto Guisado E<lt>erngui@acm.orgE<gt>, E<lt>http://triumvir.orgE<gt>
 
 =cut
 

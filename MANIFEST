@@ -17,3 +17,5 @@ eg/notepad_text.pl
 eg/spy--.pl
 eg/showwin.pl
 eg/showmouse.pl
+eg/fonts.pl
+eg/keypress.pl

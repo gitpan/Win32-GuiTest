@@ -51,8 +51,11 @@ DESCRIPTION
     The tentative name for this module is Win32::GuiTest (mostly because I
     plan to include more GUI testing functions).
 
+    I've created a Yahoo Group for the module that you can join at
+    http://groups.yahoo.com/group/perlguitest/join
+
 VERSION
-        1.1
+        1.2
 
 CHANGES
     0.01 Wed Aug 12 21:58:13 1998
@@ -183,8 +186,24 @@ CHANGES
 
         - SendKeys now takes an optional parameter to change the default 50 ms
           delay between keystrokes. Suggested by Wilson P. Snyder II
-          <wsnyder@world.std.com>. 
-    
+          <wsnyder@world.std.com>.
+
+    1.20 Wed Jul 18 20:44:11 2001
+
+        - Added GetComboText, GetComboContents, GetListText and GetListContents
+          to allow easy extraction of data from list and combo boxes.
+
+        - Added 'eg\fonts.pl' to show the new functionality. This script opens
+          the Notepad "Font" dialog and prints to stdout the contents of the Font
+          combobox.
+
+        - Fixed bug in SendMessage (and others), where the return value was lost
+          Caused by a missing OUTPUT tag.
+
+        - Added IsKeyPressed function. Suggested by Rudi Farkas.
+          See 'eg\keypress.pl' for a demo. Works even if the script
+          is running in the background.
+                             
 FUNCTIONS
     $debug  When set enables the verbose mode.
 
@@ -317,5 +336,5 @@ COPYRIGHT
     the same terms as Perl itself.
 
 AUTHOR
-    Ernesto Guisado <erngui@acm.org>, <http://www.geocities.com/erngui>
+    Ernesto Guisado <erngui@acm.org>, <http://triumvir.org>
 
