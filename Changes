@@ -1,0 +1,32 @@
+Revision history for Perl extension Win32::GuiTest.
+
+0.01  Wed Aug 12 21:58:13 1998
+	- original version; created by h2xs 1.18
+
+0.02  Sun Oct 25 20:18:17 1998
+	- Added several Win32 API functions (typemap courtesy of 
+	  Win32::APIRegistry):
+		SetForegroundWindow
+		GetDesktopWindow 
+		GetWindow 
+		GetWindowText 
+		GetClassName 
+		GetParent
+		GetWindowLong
+		SetFocus
+	- Ported FindWindowLike (MS-KB, Article ID: Q147659) from VB to
+	  Perl. Instead of using "like", I used Perl regexps. Why
+	  didn't Jeffrey Friedl include VB in "Mastering Regular
+	  Expressions"? ;-) 
+	
+0.03  Sun Oct 31 18:31:52 1999
+    - Perhaps first version released thru CPAN (user: erngui).
+    - Changed name from Win32::Test to Win32::GuiTest
+    - Fixed bug: using strdup resulted in using system malloc and 
+      perl's free, resulting in a runtime error.  
+      This way we always use perl's malloc. Got the idea from
+      'ext\Dynaloader\dl_aix.xs:calloc'.
+
+	
+
+

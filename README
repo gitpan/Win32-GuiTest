@@ -1,0 +1,31 @@
+*Name*
+
+    Win32::GuiTest - Perl Module to test Win32 Apps 
+
+*Version*
+
+    0.03
+
+*To install*
+
+    perl makefile.pl
+    nmake
+    nmake test
+    nmake install
+
+    See the pod documentation (perldoc Win32::GuiTest) after installing
+    for usage notes.
+
+*Copyright*
+
+    The SendKeys function is based on the Delphi sourcecode
+    published by Al Williams (http://www.al-williams.com/awc/) 
+    in Dr.Dobbs (http://www.ddj.com/ddj/1997/careers1/wil2.htm).
+
+    Copyright (c) 1998-1999 Ernesto Guisado. All rights reserved. This program 
+    is free software; You may distribute it and/or modify it under the 
+    same terms as Perl itself.
+
+*Comments*
+
+    Send any comment to: Ernesto Guisado <erngui@acm.org>

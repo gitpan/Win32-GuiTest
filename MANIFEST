@@ -1,0 +1,11 @@
+README
+Changes
+MANIFEST
+Makefile.PL
+GuiTest.pm
+GuiTest.xs
+buffers.h
+test.pl
+typemap
+eg/excel.pl
+eg/excel2.pl
