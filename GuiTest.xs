@@ -329,6 +329,27 @@ BOOL CALLBACK AddWindowChild(
   return TRUE;
 }
 
+/* 
+
+Phill Wolf <pbwolf@bellatlantic.net> 
+ 
+Although mouse_event is documented to take a unit of "pixels" when moving 
+to an absolute location, and "mickeys" when moving relatively, on my 
+system I can see that it takes "mickeys" in both cases.  Giving 
+mouse_event an absolute (x,y) position in pixels results in the cursor 
+going much closer to the top-left of the screen than is intended.
+ 
+Here is the function I have used in my own Perl modules to convert from screen coordinates to mickeys.
+
+*/
+
+void ScreenToMouseplane(POINT *p)
+{
+    p->x = MulDiv(p->x, 0x10000, GetSystemMetrics(SM_CXSCREEN));
+    p->y = MulDiv(p->y, 0x10000, GetSystemMetrics(SM_CYSCREEN));
+}
+ 
+
 /*  Same as mouse_event but without wheel and with time-out.
  */
 VOID simple_mouse(
@@ -391,6 +412,17 @@ SendMouseMoveAbs(x,y)
     int y;
 	CODE:
         simple_mouse(MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE, x, y);
+
+void
+MouseMoveAbsPix(x,y)
+	int x;
+    int y;
+    PREINIT:
+        int mickey_x = MulDiv(x, 0x10000, GetSystemMetrics(SM_CXSCREEN));
+        int mickey_y = MulDiv(y, 0x10000, GetSystemMetrics(SM_CYSCREEN));
+	CODE:
+        simple_mouse(MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE, mickey_x, mickey_y);
+
 
 void
 SendKeys(s)

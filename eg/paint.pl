@@ -2,7 +2,7 @@ use Win32::GuiTest qw(FindWindowLike SetForegroundWindow
     SendMouse);
 
 # Draw a triangle in MS Paint.
-system("start mspaint");
+system("start /max mspaint");
 sleep 2;
 @windows = FindWindowLike(0, "Paint", "");
 if ( $windows[0] != 0 ) {

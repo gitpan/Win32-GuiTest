@@ -5,7 +5,10 @@ GuiTest.pm
 GuiTest.xs
 test.pl
 typemap
+Win32-GuiTest.ppd
+Win32-GuiTest.tar.gz
 eg/excel.pl
 eg/excel2.pl
 eg/notepad.pl
 eg/paint.pl
+eg/paint_abs.pl

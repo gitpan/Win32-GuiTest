@@ -23,6 +23,19 @@ Win32::GuiTest - Perl GUI Test Utilities
     nmake test
     nmake install
 
+If you're using ActivePerl 5.6 (http://www.activestate.com/Products/ActivePerl/index.html) you can install the binary package I'm including instead. You'll need to enter PPM (Perl Package Manager) from the command-line. Once you have extracted the files I send you to a directory of your machine, enter PPM and do like this:
+
+    C:\TEMP>ppm
+    PPM interactive shell (2.0) - type 'help' for available commands.
+    PPM> install C:\temp\win32-guitest.ppd
+    Install package 'C:\temp\win32-guitest.ppd?' (y/N): Y
+    Retrieving package 'C:\temp\win32-guitest.ppd'...
+    Writing C:\Perl\site\lib\auto\Win32\GuiTest\.packlist
+    PPM>
+
+I extracted them to 'c:\temp', please use the directory where you extracted the files instead.
+
+
 =head1 DESCRIPTION
 
 Most GUI test scripts I have seen/written for Win32 use some variant of Visual
@@ -42,7 +55,7 @@ include more GUI testing functions).
 
 =head1 VERSION
 
-    0.05
+    0.07
 
 =head1 CHANGES
 
@@ -114,6 +127,18 @@ include more GUI testing functions).
 
     - Code cleanup.
 
+
+0.07 Sun Nov 19 13:02:00 2000
+
+    - Added MouseMoveAbsPix to allow moving the mouse to an absolute pixel 
+      coordinate instead of using mouse_event's (0, 0) to (65535, 65535) 
+      coordinates.
+      Thanks to Phill Wolf <pbwolf@bellatlantic.net> for the idea 
+      and original code. Also added 'eg\paint_abs.pl' to the distribution 
+      to test this functionality.
+
+    - Added binaries for the ActivePerl distribution. 
+    
 =cut
 
 package Win32::GuiTest;
@@ -139,10 +164,10 @@ GetDesktopWindow GetWindow GetWindowText GetClassName GetParent
         SendLButtonUp SendLButtonDown
         SendMButtonUp SendMButtonDown
         SendRButtonUp SendRButtonDown
-        SendMouseMoveAbs SendMouseMoveRel);
+        SendMouseMoveAbs MouseMoveAbsPix SendMouseMoveRel);
 
 
-$VERSION = '0.6';
+$VERSION = '0.7';
 
 $debug = 0;
 
@@ -233,6 +258,7 @@ containing one or more of the following substrings:
 
 Note: Absolute mouse coordinates range from 0 to 65535.
       Relative coordinates can be positive or negative.
+      If you need pixel coordinates you can use MouseMoveAbsPix.
 
 Also equivalent low-level functions are available:
 
@@ -244,6 +270,8 @@ Also equivalent low-level functions are available:
 	SendRButtonDown()
 	SendMouseMoveRel(x,y)
     SendMouseMoveAbs(x,y)
+
+
 	
 =back
 
@@ -281,6 +309,17 @@ sub SendMouse {
 		else  { warn "GuiTest: Unmatched mouse command! \n"; }
 	}
 }
+
+
+=item MouseMoveAbsPix(X,Y)
+
+Move the mouse cursor to the screen pixel indicated as parameter.
+
+
+    # Moves to x=200, y=100 in pixel coordinates.
+    MouseMoveAbsPix(200, 100); 
+	
+
 
 =item FindWindowLike WINDOW, TITLEPATTERN, CLASSPATTERN, CHILDID 
 
@@ -410,7 +449,7 @@ same terms as Perl itself.
 
 =head1 AUTHOR
 
-Ernesto Guisado E<lt>erngui@acm.orgE<gt>
+Ernesto Guisado E<lt>erngui@acm.orgE<gt>, E<lt>http://www.geocities.com/ernguiE<gt>
 
 =cut
 

@@ -20,24 +20,42 @@ INSTALLATION
         nmake test
         nmake install
 
+    If you're using ActivePerl 5.6
+    (http://www.activestate.com/Products/ActivePerl/index.html) you can
+    install the binary package I'm including instead. You'll need to enter
+    PPM (Perl Package Manager) from the command-line. Once you have
+    extracted the files I send you to a directory of your machine, enter PPM
+    and do like this:
+
+        C:\TEMP>ppm
+        PPM interactive shell (2.0) - type 'help' for available commands.
+        PPM> install C:\temp\win32-guitest.ppd
+        Install package 'C:\temp\win32-guitest.ppd?' (y/N): Y
+        Retrieving package 'C:\temp\win32-guitest.ppd'...
+        Writing C:\Perl\site\lib\auto\Win32\GuiTest\.packlist
+        PPM>
+
+    I extracted them to 'c:\temp', please use the directory where you
+    extracted the files instead.
+
 DESCRIPTION
-    Most GUI test scripts I have seen/written for Win32 use some
-    variant of Visual Basic (e.g. MS-VB or MS-Visual Test). The main
-    reason is the availability of the SendKeys function.
+    Most GUI test scripts I have seen/written for Win32 use some variant of
+    Visual Basic (e.g. MS-VB or MS-Visual Test). The main reason is the
+    availability of the SendKeys function.
 
-    A nice way to drive Win32 programs from a test script is to use
-    OLE Automation (ActiveX Scripting), but not all Win32 programs
-    support this interface. That's where SendKeys comes handy.
+    A nice way to drive Win32 programs from a test script is to use OLE
+    Automation (ActiveX Scripting), but not all Win32 programs support this
+    interface. That's where SendKeys comes handy.
 
-    Some time ago Al Williams published a Delphi version in Dr.
-    Dobb's (http://www.ddj.com/ddj/1997/careers1/wil2.htm). I ported
-    it to C and packaged it using h2xs...
+    Some time ago Al Williams published a Delphi version in Dr. Dobb's
+    (http://www.ddj.com/ddj/1997/careers1/wil2.htm). I ported it to C and
+    packaged it using h2xs...
 
-    The tentative name for this module is Win32::GuiTest (mostly
-    because I plan to include more GUI testing functions).
+    The tentative name for this module is Win32::GuiTest (mostly because I
+    plan to include more GUI testing functions).
 
 VERSION
-        0.05
+        0.07
 
 CHANGES
     0.01 Wed Aug 12 21:58:13 1998
@@ -61,8 +79,8 @@ CHANGES
           Perl. Instead of using "like", I used Perl regexps. Why
           didn't Jeffrey Friedl include VB in "Mastering Regular
           Expressions"? ;-). 
-            
-    0.03  Sun Oct 31 18:31:52 1999
+        
+    0.03 Sun Oct 31 18:31:52 1999
 
         - Perhaps first version released thru CPAN (user: erngui).
 
@@ -107,25 +125,40 @@ CHANGES
 
         - Code cleanup.
 
+    0.07 Sun Nov 19 13:02:00 2000
+
+        - Added MouseMoveAbsPix to allow moving the mouse to an absolute pixel 
+          coordinate instead of using mouse_event's (0, 0) to (65535, 65535) 
+          coordinates.
+          Thanks to Phill Wolf <pbwolf@bellatlantic.net> for the idea 
+          and original code. Also added 'eg\paint_abs.pl' to the distribution 
+          to test this functionality.
+
+        - Added binaries for the ActivePerl distribution. 
+    
 FUNCTIONS
     $debug  When set enables the verbose mode.
 
     SendKeys KEYS
             Sends keystrokes to the active window as if typed at the
-            keyboard. The keystrokes to send are specified in KEYS.
-            There are several characters that have special meaning.
-            This allows sending control codes and modifiers: ~ means
-            ENTER + means SHIFT ^ means CTRL % means ALT
+            keyboard. The keystrokes to send are specified in KEYS. There
+            are several characters that have special meaning. This allows
+            sending control codes and modifiers:
 
-            The parens allow character grouping. You may group
-            several characters, so that a specific keyboard modifier
-            applies to all of them.
+                    ~ means ENTER
+                    + means SHIFT 
+                    ^ means CTRL 
+                    % means ALT
+
+            The parens allow character grouping. You may group several
+            characters, so that a specific keyboard modifier applies to all
+            of them.
 
             E.g. SendKeys("ABC") <=> SendKeys("+(abc)")
 
             The curly braces are used to quote special characters
-            (SendKeys("{+}{{}") sends a '+' and a '{'). You can also
-            use them to specify certain named actions:
+            (SendKeys("{+}{{}") sends a '+' and a '{'). You can also use
+            them to specify certain named actions:
 
                     Name              Action
 
@@ -156,31 +189,29 @@ FUNCTIONS
                 ...               ...
                 {F24}             Function Key 24
 
-            All these named actions take an optional integer
-            argument, like in {RIGHT 5}. For all of them, except
-            PAUSE, the argument means a repeat count. For PAUSE it
-            means the number of milliseconds SendKeys should pause
-            before proceding.
+            All these named actions take an optional integer argument, like
+            in {RIGHT 5}. For all of them, except PAUSE, the argument means
+            a repeat count. For PAUSE it means the number of milliseconds
+            SendKeys should pause before proceding.
 
-            In this implementation, SendKeys always returns after
-            sending the keystrokes. There is no way to tell if an
-            application has processed those keys when the function
-            returns.
+            In this implementation, SendKeys always returns after sending
+            the keystrokes. There is no way to tell if an application has
+            processed those keys when the function returns.
 
     SendMouse COMMAND
-            This function emulates mouse input. The COMMAND
-            parameter is a string containing one or more of the
-            following substrings: {LEFTDOWN} left button down
-            {LEFTUP} left button up {MIDDLEDOWN} middle button down
-            {MIDDLEUP} middle button up {RIGHTDOWN} right button
-            down {RIGHTUP} right button up {LEFTCLICK} left button
+            This function emulates mouse input. The COMMAND parameter is a
+            string containing one or more of the following substrings:
+            {LEFTDOWN} left button down {LEFTUP} left button up {MIDDLEDOWN}
+            middle button down {MIDDLEUP} middle button up {RIGHTDOWN} right
+            button down {RIGHTUP} right button up {LEFTCLICK} left button
             single click {MIDDLECLICK} middle button single click
-            {RIGHTCLICK} right button single click {ABSx,y} move to
-            absolute coordinate ( x, y ) {RELx,y} move to relative
-            coordinate ( x, y )
+            {RIGHTCLICK} right button single click {ABSx,y} move to absolute
+            coordinate ( x, y ) {RELx,y} move to relative coordinate ( x, y
+            )
 
-            Note: Absolute mouse coordinates range from 0 to 65535.
-            Relative coordinates can be positive or negative.
+            Note: Absolute mouse coordinates range from 0 to 65535. Relative
+            coordinates can be positive or negative. If you need pixel
+            coordinates you can use MouseMoveAbsPix.
 
             Also equivalent low-level functions are available:
 
@@ -192,32 +223,34 @@ FUNCTIONS
                     SendRButtonDown()
                     SendMouseMoveRel(x,y)
                 SendMouseMoveAbs(x,y)
-                    
-            =back
 
+    MouseMoveAbsPix(X,Y)
+    Move the mouse cursor to the screen pixel indicated as parameter.
+
+        # Moves to x=200, y=100 in pixel coordinates.
+        MouseMoveAbsPix(200, 100); 
+        
     FindWindowLike WINDOW, TITLEPATTERN, CLASSPATTERN, CHILDID
-            Finds the window handles of the windows matching the
-            specified parameters and returns them as a list.
+    Finds the window handles of the windows matching the specified
+    parameters and returns them as a list.
 
-            You may specify the handle of the window to search
-            under. The routine searches through all of this windows
-            children and their children recursively. If 'undef' then
-            the routine searches through all windows. There is also
-            a regexp used to match against the text in the window
-            caption and another regexp used to match against the
-            text in the window class. If you pass a child ID number,
-            the functions will only match windows with this id. In
-            each case undef matches everything.
+    You may specify the handle of the window to search under. The routine
+    searches through all of this windows children and their children
+    recursively. If 'undef' then the routine searches through all windows.
+    There is also a regexp used to match against the text in the window
+    caption and another regexp used to match against the text in the window
+    class. If you pass a child ID number, the functions will only match
+    windows with this id. In each case undef matches everything.
 
 COPYRIGHT
-    The SendKeys function is based on the Delphi sourcecode
-    published by Al Williams (http://www.al-williams.com/awc/) in
-    Dr.Dobbs (http://www.ddj.com/ddj/1997/careers1/wil2.htm).
+    The SendKeys function is based on the Delphi sourcecode published by Al
+    Williams (http://www.al-williams.com/awc/) in Dr.Dobbs
+    (http://www.ddj.com/ddj/1997/careers1/wil2.htm).
 
-    Copyright (c) 1998-2000 Ernesto Guisado. All rights reserved.
-    This program is free software; You may distribute it and/or
-    modify it under the same terms as Perl itself.
+    Copyright (c) 1998-2000 Ernesto Guisado. All rights reserved. This
+    program is free software; You may distribute it and/or modify it under
+    the same terms as Perl itself.
 
 AUTHOR
-    Ernesto Guisado <erngui@acm.org>
+    Ernesto Guisado <erngui@acm.org>, <http://www.geocities.com/erngui>
 
