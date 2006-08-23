@@ -29,7 +29,7 @@ $ENV{PERL5LIB}="$Bin/blib/lib;$Bin/blib/arch";
 foreach my $file (@manifest) {
   next if $file =~ /Examples.pm/;
 }
-sys("nmake test");
+#sys("nmake test");
 sys("makepod GuiTest");
 sys("makepod Examples");
 sys("copy guitest.txt README");
