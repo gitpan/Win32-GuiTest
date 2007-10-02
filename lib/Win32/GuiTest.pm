@@ -240,7 +240,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.50.5';
+$VERSION = '1.51';
 
 $debug = 0;
 

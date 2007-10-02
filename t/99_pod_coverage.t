@@ -1,0 +1,35 @@
+#! /usr/bin/perl
+# $Id$
+
+use strict;
+use warnings;
+
+use Test::More;
+eval 'use Test::Pod::Coverage';
+plan skip_all => 'Test::Pod::Coverage required for testing POD coverage'
+    if $@;
+eval 'use Win32::GuiTest';
+plan skip_all => 'Win32::GuiTest cannot be loaded'
+    if $@;
+my $skip = join '|', 
+	( map { quotemeta } map {  @$_ } values %Win32::GuiTest::EXPORT_TAGS) ,
+	qw(
+		AllocateVirtualBufferImp
+		DbgShow
+		FindAndCheck
+		FreeVirtualBufferImp
+		GetHeaderColumnCount
+		GetListViewHeader
+		GetListViewItem
+		GetListViewItemCount
+		MatchTitleOrId
+		MenuSelectItem
+		ReadFromVirtualBufferImp
+		SendKeysImp
+		TVPathWalk
+		WriteToVirtualBufferImp
+	);
+all_pod_coverage_ok( { 
+	also_private => [ qr/^(MaybeAssoc|MaybeCommand|try_again)$/ ],
+	trustme => [ qr/^($skip|[A-Z]{2,}(?:_[A-Z]{2,})+)$/ ],
+} );

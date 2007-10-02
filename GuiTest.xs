@@ -14,6 +14,10 @@
  */
 
 #define WIN32_LEAN_AND_MEAN
+#define _WIN32_IE 0x0500
+#ifndef SIZE_T
+#	define SIZE_T DWORD
+#endif
 #include <windows.h>
 #include <commctrl.h>
 #include "dibsect.h"
@@ -319,7 +323,7 @@ HHOOK SetHook(HWND hWnd, UINT &uMsg, char *lpMsgId)
 	g_hHook = SetWindowsHookEx(WH_CALLWNDPROC, (HOOKPROC)HookProc,
 				g_hDLL, GetWindowThreadProcessId(hWnd, NULL));
 	
-	if (uMsg == NULL)
+	if (uMsg == 0)
 		uMsg = RegisterWindowMessage(lpMsgId);
 
 	return g_hHook;	

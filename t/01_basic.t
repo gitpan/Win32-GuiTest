@@ -30,10 +30,10 @@ my @desks = grep { $_ == $root } @wins;
 ok(! @desks, "The desktop is not on the window list");
 
 # Create a notepad window and check we can find it
-system("start notepad.exe guitest.pm");
-my @waitwin = WaitWindowLike(0, "[gG]ui[tT]est", "Notepad");
-is(@waitwin, 1, "There is one notepad open with guitest in it");
-my @windows = FindWindowLike(0, "[gG]ui[tT]est", "Notepad");
+system("cmd /c start notepad.exe README");
+my @waitwin = WaitWindowLike(0, "readme|README", "Notepad");
+is(@waitwin, 1, "There is one notepad open with README in it");
+my @windows = FindWindowLike(0, "readme|README", "Notepad");
 is(@windows, 1, "The same from FindWindowLike");
 is($waitwin[0], $windows[0], "The two windows are the same");
 
@@ -47,17 +47,18 @@ my $content = WMGetText($edits[0]);
 # Make CRLF into LF
 $content =~ s/\r\n/\n/gs;
 SendKeys("%{F4}");
-open(GUI_FILE, "<guitest.pm");
+open(GUI_FILE, "<README");
 my @lines = <GUI_FILE>;
 close GUI_FILE;
 my $file_content = join('', @lines);
 like($content, qr/Win32::GuiTest/,      "we have Win32::GuiTest in the text");
 like($file_content, qr/Win32::GuiTest/, "in the file too");
-is($content, $file_content, "file is identical to what is in notepad");
-
+$content =~ s/\x0d\x0a/\n/gs;
+$file_content =~ s/\x0d\x0a/\n/gs;
+is($content eq $file_content, 1, "file is identical to what is in notepad");
 
 # Open a notepad and type some text into it
-system("start notepad.exe");
+system("cmd /c start notepad.exe");
 @waitwin = WaitWindowLike(0, "", "Notepad");
 is(@waitwin, 1, "New notepad opened");
 @windows = FindWindowLike(0, "", "Notepad");

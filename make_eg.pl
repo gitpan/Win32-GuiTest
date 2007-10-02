@@ -9,7 +9,7 @@ use strict;
 # Written by Gabor Szabo <gabor@pti.co.il>
 
 
-open my $out, ">Examples.pm";
+open my $out, ">lib/Win32/GuiTest/Examples.pm" or die "Cannot open lib/Win32/GuiTest/Examples.pm:$!\n";
 print $out <<END;
 package Win32::GuiTest::Examples;
 1;

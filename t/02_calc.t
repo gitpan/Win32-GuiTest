@@ -19,7 +19,7 @@ my $desk = GetDesktopWindow();
 # to select Scientific mode, close it and then open it again hoping that
 # it is now really in scientific mode.
 {
-	system("start calc");
+	system("cmd /c start calc");
 	my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$"); 
 	# hmm, It seems the SciCalc is the name of the class for both the Standard and the 
 	# Scientific version of the calculator
@@ -31,18 +31,17 @@ my $desk = GetDesktopWindow();
 	SendKeys("%{F4}");
 }
 
-system("start calc");
+system("cmd /c start calc");
 my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$"); 
 
 SendKeys("1969");
 my $edit;
 SKIP: {
-	($edit) = FindWindowLike($calc, undef, "Edit");
+	($edit) = FindWindowLike($calc, undef, "Edit|Static");
 	ok(defined $edit, "found editor") or skip "could not find Edit window", 1;
 	ok(IsWindow($edit), "Editor is a window");
 	is(WMGetText($edit), "1969. ", "1969 found");
 }
-
 
 #Find the Hex radio button
 my $hex;

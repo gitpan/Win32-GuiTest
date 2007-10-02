@@ -274,3 +274,10 @@
      - Added multicolumn GetListViewContents, implemented by Denis Howe.
        Thanks to Charles Kuo for testing this
 
+1.51 Fri Sep 28 10:58:05 CEST 2007
+
+     - Compile and pass tests under cygwin; file cases and locations rearranged
+     - Calculator test fixed
+     - Add POD tests, remove explicit podchecker and pod2html calls
+     - Remove various obsolete targets (ppm,Build.PL,readme.html) and shape up Makefile.PL
+       for modern ExtUtils::MakeMaker 
