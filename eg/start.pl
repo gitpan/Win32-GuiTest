@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: start.pl,v 1.1 2004/07/13 21:52:26 szabgab Exp $
+# $Id: start.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
 
 # Disclaimer: I tried this on my WindowsXP,
 # Other Windows, or other configurations might place the "Run" option

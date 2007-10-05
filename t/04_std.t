@@ -1,7 +1,7 @@
 #!perl -w
 BEGIN { $| = 1; }
 
-# $Id: std.t,v 1.3 2004/07/19 20:17:58 szabgab Exp $
+# $Id: 04_std.t,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
 
 use strict;
 use Test::More qw(no_plan);

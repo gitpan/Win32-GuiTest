@@ -1,5 +1,5 @@
 #
-# $Id: guitest.pm,v 1.40 2005/11/29 03:50:46 pkaluski Exp $
+# $Id: GuiTest.pm,v 1.3 2007/10/05 10:32:55 dk Exp $
 #
 
 =head1 NAME
@@ -240,7 +240,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.51';
+$VERSION = '1.52';
 
 $debug = 0;
 
@@ -315,6 +315,9 @@ sends a '+' and a '{'). You can also use them to specify certain named actions:
         {RWI}         Right Windows Key 
         {APP}         Open Context Menu Key
 
+or supply a number that will be treated as a VK code. Note that a single-digit
+number will be treated as a character, so prepend these with '0'.
+
 All these named actions take an optional integer argument, like in {RIGHT 5}. 
 For all of them, except PAUSE, the argument means a repeat count. For PAUSE
 it means the number of milliseconds SendKeys should pause before proceding.
@@ -326,11 +329,12 @@ function returns.
 =cut
 
 sub SendKeys {
-    my $keys  = shift;
-    my $delay = shift;
-    $delay = 50 unless defined($delay);
-    #print "<$delay>";
-    SendKeysImp($keys, $delay);
+	my $keys  = shift;
+	my $delay = shift;
+	$delay = 50 unless defined($delay);
+
+	#print "<$delay>";
+	SendKeysImp($keys, $delay);
 }
 
 =item SendMouse($command)
@@ -1132,6 +1136,7 @@ specified key.
     IsKeyPressed("ESC");
     IsKeyPressed("A");
     IsKeyPressed("DOWN"); 
+    IsKeyPressed( VK_DOWN);
 
 =item SendRawKey($virtualkey,$flags)
 

@@ -1,5 +1,5 @@
 /* 
- *  $Id: dibsect.cpp,v 1.2 2004/05/29 12:28:28 ctrondlp Exp $
+ *  $Id: DibSect.cpp,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
  *
  *  Adapted from code submitted by Jarek Jurasz
  * <jurasz@imb.uni-karlsruhe.de>. Thanks!

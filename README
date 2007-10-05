@@ -139,6 +139,10 @@ DESCRIPTION
                 {RWI}         Right Windows Key 
                 {APP}         Open Context Menu Key
 
+        or supply a number that will be treated as a VK code. Note that a
+        single-digit number will be treated as a character, so prepend these
+        with '0'.
+
         All these named actions take an optional integer argument, like in
         {RIGHT 5}. For all of them, except PAUSE, the argument means a
         repeat count. For PAUSE it means the number of milliseconds SendKeys
@@ -490,6 +494,7 @@ DESCRIPTION
             IsKeyPressed("ESC");
             IsKeyPressed("A");
             IsKeyPressed("DOWN"); 
+            IsKeyPressed( VK_DOWN);
 
     SendRawKey($virtualkey,$flags)
         Wrapper around keybd_event. Allows sending low-level keys. The first

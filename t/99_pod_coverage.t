@@ -1,5 +1,5 @@
 #! /usr/bin/perl
-# $Id$
+# $Id: 99_pod_coverage.t,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
 
 use strict;
 use warnings;

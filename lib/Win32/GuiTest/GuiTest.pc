@@ -69,8 +69,8 @@ sub VK_RBUTTON        { 0x02; }
 sub VK_CANCEL         { 0x03; }
 sub VK_MBUTTON        { 0x04; }
 
-sub VK_BACK           { 0x08; }
-sub VK_TAB            { 0x09; }
+sub VK_BACK           { '0' . 0x08; } # for IsKeyPressed, because it treats 
+sub VK_TAB            { '0' . 0x09; } # single digits as characters
 
 sub VK_CLEAR          { 0x0C; }
 sub VK_RETURN         { 0x0D; }

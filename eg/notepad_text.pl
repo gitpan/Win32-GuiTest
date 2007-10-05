@@ -1,5 +1,5 @@
 #!perl -w
-# $Id: notepad_text.pl,v 1.3 2004/07/21 17:47:38 szabgab Exp $
+# $Id: notepad_text.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
 # If you have a notepad window open this prints the contents.
 
 use strict;

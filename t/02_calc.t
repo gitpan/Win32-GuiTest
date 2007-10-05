@@ -2,7 +2,7 @@
 BEGIN { $| = 1; }
 
 # Do some tricks with the calculator
-# $Id: 02calc.t,v 1.2 2004/07/19 20:17:58 szabgab Exp $
+# $Id: 02_calc.t,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
 
 use strict;
 use Test::More qw(no_plan);

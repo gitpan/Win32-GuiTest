@@ -1,4 +1,4 @@
-# $Id: cmd.pm,v 1.1 2004/03/16 01:37:20 ctrondlp Exp $
+# $Id: Cmd.pm,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
 =head1 NAME
 
 Win32::GuiTest::Cmd - Perl Batch File Enhancer. Part of Win32::GuiTest.

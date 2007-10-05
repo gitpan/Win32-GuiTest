@@ -1,7 +1,7 @@
 #!perl -w
 BEGIN { $| = 1; }
 
-# $Id: cpl.t,v 1.4 2004/07/21 21:36:02 szabgab Exp $
+# $Id: 03_cpl.t,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
 
 use strict;
 

@@ -19,7 +19,7 @@ the distribution and take the files from the eg directory.
 
     #!perl -w
     
-    # $Id: ask.pl,v 1.4 2004/07/19 20:20:58 szabgab Exp $
+    # $Id: ask.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     # Just ask a number of questions on the command line using
     # the functions provided by Win32::GuiTest::Cmd
@@ -48,7 +48,7 @@ the distribution and take the files from the eg directory.
 
     #!perl -w
     
-    #$Id: calc.pl,v 1.1 2004/07/17 16:07:42 szabgab Exp $
+    #$Id: calc.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     # Written by Gabor Szabo <gabor@pti.co.il>
     # An example how to access the built in calculator (calc.exe) of Windows.
@@ -117,7 +117,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/excel.pl
 
     #!perl -w
-    # $Id: excel.pl,v 1.4 2004/07/19 20:20:58 szabgab Exp $
+    # $Id: excel.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     
     use strict;
@@ -155,7 +155,7 @@ the distribution and take the files from the eg directory.
 
     #!perl -w
     
-    # $Id: excel2.pl,v 1.4 2004/07/19 20:20:58 szabgab Exp $
+    # $Id: excel2.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     # Exercise Win32::GuiTest using MS-Excel. Will only work with non-localized
     # versions of Excel (hard-coded hot-keys).
@@ -199,7 +199,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/fonts.pl
 
     #!perl -w
-    # $Id: fonts.pl,v 1.4 2004/07/19 20:20:58 szabgab Exp $
+    # $Id: fonts.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # Use Win32::GuiTest to get a list of supported fonts from a
     # dialog box.
     # By Ernesto Guisado (erngui@acm.org).
@@ -244,7 +244,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/iswindowstyle.pl
 
     #!/usr/bin/perl
-    # $Id: iswindowstyle.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+    # $Id: iswindowstyle.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     
     use Win32::GuiTest qw(:FUNC :LVS);
@@ -268,7 +268,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/keypress.pl
 
     #!/usr/bin/perl
-    # $Id: keypress.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+    # $Id: keypress.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # This example shows an easy way to check for certain keystrokes.
     # The IsKeyPressed function takes a string with the name of the key.
     # This names are the same ones as for SendKeys. 
@@ -290,7 +290,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/menuselect.pl
 
     #!perl -w
-    # $Id: menuselect.pl,v 1.8 2004/07/28 11:45:13 szabgab Exp $
+    # $Id: menuselect.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     
     # Example how to get the names of the menus
     
@@ -356,7 +356,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/notepad.pl
 
     #!/usr/bin/perl
-    # $Id: notepad.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+    # $Id: notepad.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     
     use Win32::GuiTest;
@@ -378,7 +378,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/notepad_text.pl
 
     #!perl -w
-    # $Id: notepad_text.pl,v 1.3 2004/07/21 17:47:38 szabgab Exp $
+    # $Id: notepad_text.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # If you have a notepad window open this prints the contents.
     
     use strict;
@@ -404,7 +404,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/paint.pl
 
     #!perl -w
-    # $Id: paint.pl,v 1.3 2004/07/21 17:47:38 szabgab Exp $
+    # $Id: paint.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # Draw triangles in MS Paint.
     
     
@@ -448,7 +448,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/paint_abs.pl
 
     #!perl -w
-    # $Id: paint_abs.pl,v 1.3 2004/07/21 17:47:38 szabgab Exp $
+    # $Id: paint_abs.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     # Draw an X and a box around it
     #
@@ -492,7 +492,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/pushbutton.pl
 
     #!/usr/bin/perl
-    # $Id: pushbutton.pl,v 1.4 2004/04/09 01:19:43 ctrondlp Exp $
+    # $Id: pushbutton.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     
     use strict;
@@ -524,7 +524,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/rawkey.pl
 
     #!/usr/bin/perl
-    # $Id: rawkey.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+    # $Id: rawkey.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     
     use Win32::GuiTest qw(:FUNC :VK);
@@ -537,7 +537,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/selecttabitem.pl
 
     #!/usr/bin/perl
-    # $Id: selecttabitem.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+    # $Id: selecttabitem.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     
     use Win32::GuiTest qw(GetWindowID GetChildWindows GetWindowText
@@ -566,7 +566,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/showcpl.pl
 
     #!/usr/bin/perl
-    # $Id: showcpl.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+    # $Id: showcpl.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # Shows how to open control panel apps programmatically
     #
     
@@ -624,7 +624,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/showmouse.pl
 
     #!/usr/bin/perl
-    # $Id: showmouse.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+    # $Id: showmouse.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # This script has been written by Jarek Jurasz jurasz@imb.uni-karlsruhe.de
     
     use Win32::GuiTest qw(GetCursorPos);
@@ -640,7 +640,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/showwin.pl
 
     #!/usr/bin/perl
-    # $Id: showwin.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+    # $Id: showwin.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # This script has been written by Jarek Jurasz jurasz@imb.uni-karlsruhe.de
     # selectively show/hide a group of windows
     # side effect: showing the window activates it
@@ -710,7 +710,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/spy--.pl
 
     #!/usr/bin/perl
-    # $Id: spy--.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+    # $Id: spy--.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # MS has a very nice tool (Spy++).
     # This is Spy--
     #
@@ -737,7 +737,7 @@ the distribution and take the files from the eg directory.
     
     # Written by Gabor Szabo <gabor@pti.co.il>
     
-    # $Id: spy.pl,v 1.3 2004/07/21 21:38:22 szabgab Exp $
+    # $Id: spy.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     my $VERSION = "0.02";
     
     use Getopt::Long;
@@ -862,7 +862,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/start.pl
 
     #!/usr/bin/perl
-    # $Id: start.pl,v 1.1 2004/07/13 21:52:26 szabgab Exp $
+    # $Id: start.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     
     # Disclaimer: I tried this on my WindowsXP,
     # Other Windows, or other configurations might place the "Run" option
@@ -909,7 +909,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/tab.pl
 
     #!/usr/bin/perl
-    # $Id: tab.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+    # $Id: tab.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     
     use Win32::GuiTest qw(:FUNC :VK);
@@ -922,7 +922,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/waitwindow.pl
 
     #!/usr/bin/perl
-    # $Id: waitwindow.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
+    # $Id: waitwindow.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # Slightly modified from version submitted by anonymous contributor.
     #
     
@@ -967,7 +967,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/which.pl
 
     #!/usr/bin/perl
-    # $Id: which.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+    # $Id: which.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # Similar to UNIX which command.
     #
     # On my NT box:
@@ -988,7 +988,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/winbmp.pl
 
     #!/usr/bin/perl
-    # $Id: winbmp.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
+    # $Id: winbmp.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     # This script has been written by Jarek Jurasz jurasz@imb.uni-karlsruhe.de
     # Save a given window as BMP file
     # Copy the contents to the clipboard
@@ -1012,7 +1012,7 @@ the distribution and take the files from the eg directory.
 =head2 eg/wptr.pl
 
     #!/usr/bin/perl
-    # $Id: wptr.pl,v 1.4 2004/07/22 22:25:13 ctrondlp Exp $
+    # $Id: wptr.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
     #
     
     # Module Pragmas

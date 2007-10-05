@@ -1,5 +1,5 @@
 /* 
- *  $Id: guitest.xs,v 1.22 2005/11/29 03:19:38 pkaluski Exp $
+ *  $Id: GuiTest.xs,v 1.3 2007/10/05 10:32:55 dk Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -602,8 +602,14 @@ int findvkey(const char* name, int* key)
         "APP",  VK_APPS,
     };
     int i;
+
+    if ( isdigit(name[0]) && name[1] > 0) {
+       *key = atoi(name);
+       return 1;
+    }
+
     for (i=0;i<sizeof(tbl)/sizeof(tokentable);i++) {
-        if (strcmp(tbl[i].token, name)==0) {
+        if (strncmp(tbl[i].token, name, 3)==0) {
             *key=tbl[i].vkey;
             return 1;
 	}
@@ -694,12 +700,8 @@ void procbrace(
 		for (k=0;k<(int)strlen(tmp); k++)
 			tmp[k]=toupper(tmp[k]);
 		
-		/* chop token to 3 characters or less */
-		if (strlen(tmp)>3) 
-			tmp[3]=NUL;
-
 		/* handle pause specially */
-		if (strcmp(tmp,"PAU")==0) {
+		if (strncmp(tmp,"PAU",3)==0) {
             OutputDebugString("Found PAUSE\n");
 OutputDebugString(tmp);
 OutputDebugString("\n");
@@ -711,7 +713,7 @@ OutputDebugString("\n");
 		
 		/* find entry in table */
 		*key=0;
-        findvkey(tmp, key);
+        	findvkey(tmp, key);
 		/* if key=0 here then something is bad */
 	} /* end of token processing */
 
@@ -1790,16 +1792,14 @@ IsKeyPressed(name)
     int vkey;
     int found;
     int len = strlen(name);
-    if (len >= 3) 
-        name[3]=NUL;
     found = findvkey(name, &vkey);
     if (found) {
         OutputDebugString("Trying key\n");
         RETVAL = GetAsyncKeyState(vkey);
-    } else if (strlen(name)==1 && (isdigit(*name) || isalpha(*name))) {
+    } else if (len==1 && (isdigit(*name) || isalpha(*name))) {
         OutputDebugString("Trying alphanum\n");
         RETVAL = GetAsyncKeyState(toupper(*name));
-    }else {
+    } else {
         OutputDebugString("No key\n");
         RETVAL = 0;
     }

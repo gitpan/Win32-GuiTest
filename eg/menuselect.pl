@@ -1,5 +1,5 @@
 #!perl -w
-# $Id: menuselect.pl,v 1.8 2004/07/28 11:45:13 szabgab Exp $
+# $Id: menuselect.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
 
 # Example how to get the names of the menus
 
