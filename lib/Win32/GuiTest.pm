@@ -1,5 +1,5 @@
 #
-# $Id: GuiTest.pm,v 1.3 2007/10/05 10:32:55 dk Exp $
+# $Id: GuiTest.pm,v 1.5 2007/10/06 11:27:39 dk Exp $
 #
 
 =head1 NAME
@@ -194,6 +194,7 @@ require AutoLoader;
         TabCtrl_GetItemCount
         TabCtrl_SetCurFocus
         TabCtrl_SetCurSel
+	UnicodeSemantics
         WMGetText
         WMSetText
         WaitForReady
@@ -240,7 +241,7 @@ require AutoLoader;
 }
 $EXPORT_TAGS{ALL}= \@EXPORT_OK;
                              
-$VERSION = '1.52';
+$VERSION = '1.53';
 
 $debug = 0;
 
@@ -255,7 +256,6 @@ require "Win32/GuiTest/GuiTest.pc";
 =item $debug
 
 When set enables the verbose mode.
-
 
 =item SendKeys($keys[,$delay])
 
@@ -1437,6 +1437,27 @@ Destroys the contents of the DIB section.
 
 1;
 __END__
+
+=head1 UNICODE SUPPORT
+
+Currently (2007) there's no consensus about unicode input in Perl, so
+the module declares function C<UnicodeSemantics> that sets whether 
+information queried from windows should use A or W syscalls. The
+function that support this differentiation, and produce different
+results depending on value set to C<UnicodeSemantics> is:
+
+C<GetWindowText>, and all its callers, - FindWindowLike, WaitWindow,
+WaitWindowLike
+
+=over
+
+=item UnicodeSemantics [BOOL]
+
+If a boolean parameter is set, changes the semantics flag for functions
+that return results of either A or W syscalls. If the parameter is
+not set, returns the current value of the flag.
+
+=back
 
 
 =head1 DEVELOPMENT

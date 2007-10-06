@@ -620,6 +620,21 @@ DESCRIPTION
     bool DibSect::Destroy()
             Destroys the contents of the DIB section.
 
+UNICODE SUPPORT
+    Currently (2007) there's no consensus about unicode input in Perl, so
+    the module declares function "UnicodeSemantics" that sets whether
+    information queried from windows should use A or W syscalls. The
+    function that support this differentiation, and produce different
+    results depending on value set to "UnicodeSemantics" is:
+
+    "GetWindowText", and all its callers, - FindWindowLike, WaitWindow,
+    WaitWindowLike
+
+    UnicodeSemantics [BOOL]
+        If a boolean parameter is set, changes the semantics flag for
+        functions that return results of either A or W syscalls. If the
+        parameter is not set, returns the current value of the flag.
+
 DEVELOPMENT
     If you would like to participate in the development of this module there
     are several thing that need to be done. For some of them you only need

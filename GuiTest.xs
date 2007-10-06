@@ -1,5 +1,5 @@
 /* 
- *  $Id: GuiTest.xs,v 1.3 2007/10/05 10:32:55 dk Exp $
+ *  $Id: GuiTest.xs,v 1.4 2007/10/06 08:50:34 dk Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -56,6 +56,7 @@ UINT WM_TC_ISSEL = 0;
 UINT WM_TV_SELBYPATH = 0;
 UINT WM_TV_GETSELPATH = 0;
 UINT WM_INITMENUPOPUPX = WM_INITMENUPOPUP;  //Only needed to conform with SetHook()'s calling convention
+BOOL unicode_semantics = 0;
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
@@ -1329,16 +1330,22 @@ GetWindow(hwnd, uCmd)
     OUTPUT:
 	RETVAL
 
-
 SV*
 GetWindowText(hwnd)
     HWND hwnd
     CODE:
-//        SV* sv;
-        char text[255];
+        char text[512];
         int r;
-        r = GetWindowText(hwnd, text, 255);
-        RETVAL = newSVpv(text, r);
+	if ( unicode_semantics) {
+		WCHAR buf[256];
+        	r = GetWindowTextW(hwnd, buf, 255);
+        	r = WideCharToMultiByte(CP_UTF8, 0, buf, r, text, 511, NULL, NULL);
+        	RETVAL = newSVpvn(text, r);
+		SvUTF8_on( RETVAL);
+	} else {
+        	r = GetWindowText(hwnd, text, 255);
+        	RETVAL = newSVpvn(text, r);
+	}
     OUTPUT:
         RETVAL
 
@@ -1640,6 +1647,22 @@ CODE:
   AttachWin(hwnd, FALSE);
 OUTPUT:
   RETVAL        
+
+BOOL
+UnicodeSemantics(...)
+CODE:
+  switch( items) {
+  case 0:
+    break;
+  case 1:
+    unicode_semantics = SvTRUE( ST( 0));
+    break;
+  default:
+    croak("Format: UnicodeSemantics() or UnicodeSemantics(BOOL)");
+  }
+  RETVAL = unicode_semantics;
+OUTPUT:
+  RETVAL
     
 void 
 ScreenToNorm(x,y)
