@@ -1,5 +1,5 @@
 #! /usr/bin/perl
-# $Id: 99_pod_coverage.t,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+# $Id: 99_pod_coverage.t,v 1.2 2007/10/06 22:04:49 dk Exp $
 
 use strict;
 use warnings;
@@ -30,6 +30,6 @@ my $skip = join '|',
 		WriteToVirtualBufferImp
 	);
 all_pod_coverage_ok( { 
-	also_private => [ qr/^(MaybeAssoc|MaybeCommand|try_again)$/ ],
-	trustme => [ qr/^($skip|[A-Z]{2,}(?:_[A-Z]{2,})+)$/ ],
+	also_private => [ qr/^(MaybeAssoc|MaybeCommand)$/ ],
+	trustme => [ qr/^($skip|[A-Z]{2,}(?:_[A-Z]{2,})+|[_a-z]+)$/ ],
 } );
