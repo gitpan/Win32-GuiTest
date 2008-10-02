@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: which.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+# $Id: which.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
 # Similar to UNIX which command.
 #
 # On my NT box:

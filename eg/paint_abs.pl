@@ -1,5 +1,5 @@
 #!perl -w
-# $Id: paint_abs.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+# $Id: paint_abs.pl,v 1.3 2004/07/21 17:47:38 szabgab Exp $
 #
 # Draw an X and a box around it
 #

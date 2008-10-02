@@ -1,5 +1,5 @@
 /* 
- *  $Id: DibSect.cpp,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+ *  $Id: DibSect.cpp,v 1.1 2007/10/23 11:25:25 pkaluski Exp $
  *
  *  Adapted from code submitted by Jarek Jurasz
  * <jurasz@imb.uni-karlsruhe.de>. Thanks!

@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: showmouse.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+# $Id: showmouse.pl,v 1.2 2004/03/21 08:05:06 ctrondlp Exp $
 # This script has been written by Jarek Jurasz jurasz@imb.uni-karlsruhe.de
 
 use Win32::GuiTest qw(GetCursorPos);

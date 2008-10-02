@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: wptr.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+# $Id: wptr.pl,v 1.4 2004/07/22 22:25:13 ctrondlp Exp $
 #
 
 # Module Pragmas

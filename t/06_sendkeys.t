@@ -1,7 +1,10 @@
 #!perl -w
-BEGIN { $| = 1; }
+BEGIN {
+	print "1..0 # Skip win32 required\n" and exit unless $^O =~ /win32|cygwin/i;
+	$| = 1;
+}
 
-# $Id: 06_sendkeys.t,v 1.1 2007/10/09 09:04:54 dk Exp $
+# $Id: 06_sendkeys.t,v 1.2 2008/10/01 11:10:12 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);

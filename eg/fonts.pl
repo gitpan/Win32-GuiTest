@@ -1,5 +1,5 @@
 #!perl -w
-# $Id: fonts.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+# $Id: fonts.pl,v 1.4 2004/07/19 20:20:58 szabgab Exp $
 # Use Win32::GuiTest to get a list of supported fonts from a
 # dialog box.
 # By Ernesto Guisado (erngui@acm.org).

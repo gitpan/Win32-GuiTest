@@ -1,6 +1,6 @@
 #!perl -w
 
-#$Id: calc.pl,v 1.2 2007/10/06 22:04:49 dk Exp $
+#$Id: calc.pl,v 1.2 2007/12/15 21:35:13 pkaluski Exp $
 #
 # Written by Gabor Szabo <gabor@pti.co.il>
 # An example how to access the built in calculator (calc.exe) of Windows.

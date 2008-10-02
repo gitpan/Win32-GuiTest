@@ -1,5 +1,5 @@
 #!perl -w
-# $Id: excel.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+# $Id: excel.pl,v 1.4 2004/07/19 20:20:58 szabgab Exp $
 #
 
 use strict;

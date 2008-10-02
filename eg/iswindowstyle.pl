@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# $Id: iswindowstyle.pl,v 1.1.1.1 2007/10/05 08:30:20 dk Exp $
+# $Id: iswindowstyle.pl,v 1.3 2004/03/21 08:21:28 ctrondlp Exp $
 #
 
 use Win32::GuiTest qw(:FUNC :LVS);
