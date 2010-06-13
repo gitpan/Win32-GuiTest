@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 #
-# $Id: Makefile.PL,v 1.2 2008/10/01 11:10:12 int32 Exp $
+# $Id: Makefile.PL,v 1.4 2010/05/27 13:31:25 int32 Exp $
 #
 
+use Config;
 use ExtUtils::MakeMaker;
 
 my $DEBUG = grep { m/^--debug$/ } @ARGV;
@@ -27,8 +28,9 @@ my @make = (
 		))
 	) : ()),
 	(( $^O =~ /cygwin/i) ? (
+			CC              => 'g++',
 			LD		=> 'g++',
-			LDDLFLAGS	=> '-shared',
+			LDDLFLAGS	=> "-shared $Config{ccflags}",
 			LIBS		=> ['-L/usr/lib/w32api -lgdi32'],
 	) : ()),
 	ABSTRACT_FROM			=> 'lib/Win32/GuiTest.pm',
@@ -54,7 +56,7 @@ sub distdir
 	$t . '
 
 my_create_predist:
-	$(PERL) make_eg.pl
+	$(PERL) eg/make_eg.pl
 	@pod2text lib/Win32/GuiTest.pm > README
 ';
 }

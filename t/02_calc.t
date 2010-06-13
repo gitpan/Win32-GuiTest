@@ -5,7 +5,7 @@ BEGIN {
 }
 
 # Do some tricks with the calculator
-# $Id: 02_calc.t,v 1.2 2008/10/01 11:10:12 int32 Exp $
+# $Id: 02_calc.t,v 1.5 2010/06/13 18:45:09 int32 Exp $
 
 use strict;
 use Test::More qw(no_plan);
@@ -13,6 +13,13 @@ use Test::More qw(no_plan);
 use Win32::GuiTest qw(:ALL);
 
 my $desk = GetDesktopWindow();
+
+# Make sure there are no existing Calc windows to interfere with testing
+{
+    my @calc_windows = FindWindowLike(0, "", "Calc");
+    BAIL_OUT('Please close existing Calculator windows before proceeding')
+        if @calc_windows;
+}
 
 # It seems that if the calculator opens as Standard then even if we 
 # select Scientific mode we cannot find the Hex button.
@@ -23,19 +30,25 @@ my $desk = GetDesktopWindow();
 # it is now really in scientific mode.
 {
 	system("cmd /c start calc");
-	my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$"); 
+	my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$|^CalcFrame"); 
 	# hmm, It seems the SciCalc is the name of the class for both the Standard and the 
 	# Scientific version of the calculator
-
+    
 	ok(IsWindow($calc));
 	SetForegroundWindow($calc);
+
+    if (GetClassName($calc) eq "CalcFrame") {
+    	print STDERR "# Windows 7 calculator is toooo weird!\n";
+        SendKeys("%{F4}");
+        exit;
+    }
 
 	MenuSelect("&View|&Scientific");
 	SendKeys("%{F4}");
 }
 
 system("cmd /c start calc");
-my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$"); 
+my ($calc) = WaitWindowLike($desk, undef, "^SciCalc\$|^CalcFrame"); 
 
 SendKeys("1969");
 my $edit;
@@ -43,7 +56,7 @@ SKIP: {
 	($edit) = FindWindowLike($calc, undef, "Edit|Static");
 	ok(defined $edit, "found editor") or skip "could not find Edit window", 1;
 	ok(IsWindow($edit), "Editor is a window");
-	is(WMGetText($edit), "1969. ", "1969 found");
+	ok(WMGetText($edit) =~ /^1969. $/, "1969 found");
 }
 
 #Find the Hex radio button
@@ -95,7 +108,7 @@ SKIP: {
 SKIP: {
 	skip "No Dec/bin/Oct/Hex button(s)", 9 if not ($dec and $bin and $oct and $hex);
 	PushButton("Dec"); sleep 1;
-	is(WMGetText($edit), "1969. ", "1969 in dec found");
+	ok(WMGetText($edit) =~ /^1969. $/, "1969 found");
 	ok(IsCheckedButton($dec));
 
 	PushButton("Hex"); sleep 1;
