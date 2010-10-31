@@ -1,5 +1,5 @@
 /* 
- *  $Id: GuiTest.xs,v 1.2 2008/10/01 11:27:45 int32 Exp $
+ *  $Id: GuiTest.xs,v 1.5 2010/10/31 19:04:41 int32 Exp $
  *
  *  The SendKeys function is based on the Delphi sourcecode
  *  published by Al Williams <http://www.al-williams.com/awc/> 
@@ -16,7 +16,9 @@
 #define WIN32_LEAN_AND_MEAN
 #define _WIN32_IE 0x0500
 #ifndef SIZE_T
-#	define SIZE_T DWORD
+#  ifndef __GNUC__
+#     define SIZE_T DWORD
+#  endif
 #endif
 #include <windows.h>
 #include <commctrl.h>
@@ -38,29 +40,35 @@
 
 HINSTANCE g_hDLL = NULL;
 
+#if defined (__GNUC__)
+	#define SHARED_ATTR __attribute__((section ("shared_seg"), shared))
+#else
+	#define SHARED_ATTR
+#endif
+
 #pragma data_seg(".shared")
 // Used by hooking/injected routines
-HWND g_hWnd = 0;
-HHOOK g_hHook = NULL;
-HWND g_popup = 0;   //Hold's popup menu's handle
-BOOL g_bRetVal = 0;
-char g_szBuffer[MAX_DATA_BUF+1] = {NUL};
-UINT WM_LV_GETTEXT = 0;
-UINT WM_LV_SELBYINDEX = 0;
-UINT WM_LV_SELBYTEXT = 0;
-UINT WM_LV_ISSEL = 0;
-UINT WM_TC_GETTEXT = 0;
-UINT WM_TC_SELBYINDEX = 0;
-UINT WM_TC_SELBYTEXT = 0;
-UINT WM_TC_ISSEL = 0;
-UINT WM_TV_SELBYPATH = 0;
-UINT WM_TV_GETSELPATH = 0;
-UINT WM_INITMENUPOPUPX = WM_INITMENUPOPUP;  //Only needed to conform with SetHook()'s calling convention
-BOOL unicode_semantics = 0;
+HWND g_hWnd SHARED_ATTR = 0;
+HHOOK g_hHook SHARED_ATTR = NULL;
+HWND g_popup SHARED_ATTR = 0;   //Hold's popup menu's handle
+BOOL g_bRetVal SHARED_ATTR = 0;
+char g_szBuffer[MAX_DATA_BUF+1] SHARED_ATTR = {NUL};
+UINT WM_LV_GETTEXT SHARED_ATTR = 0;
+UINT WM_LV_SELBYINDEX SHARED_ATTR = 0;
+UINT WM_LV_SELBYTEXT SHARED_ATTR = 0;
+UINT WM_LV_ISSEL SHARED_ATTR = 0;
+UINT WM_TC_GETTEXT SHARED_ATTR = 0;
+UINT WM_TC_SELBYINDEX SHARED_ATTR = 0;
+UINT WM_TC_SELBYTEXT SHARED_ATTR = 0;
+UINT WM_TC_ISSEL SHARED_ATTR = 0;
+UINT WM_TV_SELBYPATH SHARED_ATTR = 0;
+UINT WM_TV_GETSELPATH SHARED_ATTR = 0;
+UINT WM_INITMENUPOPUPX SHARED_ATTR = WM_INITMENUPOPUP;  //Only needed to conform with SetHook()'s calling convention
+BOOL unicode_semantics SHARED_ATTR = 0;
 #pragma data_seg()
 #pragma comment(linker, "/SECTION:.shared,RWS")
 
-BOOL APIENTRY DllMain(HANDLE hModule, DWORD  ul_reason_for_call, 
+extern "C" BOOL WINAPI DllMain(HANDLE hModule, DWORD  ul_reason_for_call, 
                       LPVOID lpReserved)
 {
 	switch (ul_reason_for_call)
@@ -691,8 +699,8 @@ PPCODE:
         die( "VirtualAllocEx failed with error %d: %s",
                 dw, lpMsgBuf );
     }else{
-        XPUSHs( sv_2mortal( newSVuv( ( LONG )pBuffer ) ) );
-        XPUSHs( sv_2mortal( newSVuv( ( LONG )hProcess ) ) );
+        XPUSHs( sv_2mortal( newSVuv( ( UV )pBuffer ) ) );
+        XPUSHs( sv_2mortal( newSVuv( ( UV )hProcess ) ) );
     }
 
 

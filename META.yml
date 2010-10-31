@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Win32-GuiTest
-version:            1.57
+version:            1.58
 abstract:           Perl GUI Test Utilities.
 author:
     - Dennis K. Paulsen (ctrondlp@cpan.org), Ernesto Guisado (erngui@acm.org)
