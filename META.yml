@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Win32-GuiTest
-version:            1.58
+version:            1.59
 abstract:           Perl GUI Test Utilities.
 author:
     - Dennis K. Paulsen (ctrondlp@cpan.org), Ernesto Guisado (erngui@acm.org)
@@ -11,10 +11,17 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:  {}
+resources:
+    repository:  http://github.com/dk/Win32-GuiTest
 no_index:
     directory:
         - t
         - inc
+        - eg
+        - Recorder
+    file:
+        - Makefile.PL
+        - makedist.pl
 generated_by:       ExtUtils::MakeMaker version 6.56
 meta-spec:
     url:      http://module-build.sourceforge.net/META-spec-v1.4.html
